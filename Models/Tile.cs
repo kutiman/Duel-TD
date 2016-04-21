@@ -45,6 +45,24 @@ public class Tile {
 	public void UnregisterTileTypeChangedCallback (Action<Tile> callback) {
 		cbTileTypeChanged -= callback;
 	}
+
+	public bool PlaceObject (InstalledObject objInstance) {
+		if (objInstance == null) {
+			// we are uninstalling the object that currently occupies the tile
+			installedObject = null;
+			return true;
+		}
+
+		// obj instance is null
+		if (installedObject != null) {
+			return false;
+			//Debug.LogError("Trying to install and objInstance into an already taken tile");
+		}
+
+		// everything is fine here
+		installedObject = objInstance;
+		return true;
+	}
 }
 
 

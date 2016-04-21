@@ -6,6 +6,9 @@ using UnityEngine.EventSystems;
 public class MouseController : MonoBehaviour {
 
 	Tile.TileType tileBuildMode = Tile.TileType.Ground;
+	string buildmodeObjectType;
+	bool buildModeIsObjects = false;
+
 
 	Vector3 lastFramePosition;
 	Vector3 currFramePosition;
@@ -65,7 +68,7 @@ public class MouseController : MonoBehaviour {
 
 	void UpdateDragging () {
 		// if mouse is over a UI element, escape this
-		if (EventSystem.current.IsPointerOverGameObject() && !isDragging) return;
+		if (EventSystem.current.IsPointerOverGameObject () && !isDragging) return;
 
 		// the starting position of a drag
 		if (Input.GetMouseButtonDown (0)) {
@@ -92,8 +95,8 @@ public class MouseController : MonoBehaviour {
 		}
 		// destroying markers of dragging
 		while (dragMarkersGameObjects.Count > 0) {
-			GameObject go = dragMarkersGameObjects[0];
-			dragMarkersGameObjects.RemoveAt(0);
+			GameObject go = dragMarkersGameObjects [0];
+			dragMarkersGameObjects.RemoveAt (0);
 			SimplePool.Despawn (go);
 		}
 
@@ -104,9 +107,9 @@ public class MouseController : MonoBehaviour {
 				for (int y = start_y; y <= end_y; y++) {
 					Tile t = WorldController.Instance.World.GetTileAt (x, y);
 					if (t != null) {
-						GameObject go = SimplePool.Spawn(cursorMarker, new Vector3(x, 0.01f, y), Quaternion.identity);
-						go.transform.SetParent(this.transform, true);
-						dragMarkersGameObjects.Add(go);
+						GameObject go = SimplePool.Spawn (cursorMarker, new Vector3 (x, 0.01f, y), Quaternion.identity);
+						go.transform.SetParent (this.transform, true);
+						dragMarkersGameObjects.Add (go);
 					}
 				}
 				
@@ -121,7 +124,14 @@ public class MouseController : MonoBehaviour {
 				for (int y = start_y; y <= end_y; y++) {
 					Tile t = WorldController.Instance.World.GetTileAt (x, y);
 					if (t != null) {
-						t.Type = tileBuildMode;
+						if (buildModeIsObjects == true) {
+							// create an installed object in the tile
+							WorldController.Instance.World.PlaceInstalledObject(buildmodeObjectType, t);
+						}
+						else {
+							// change the tile
+							t.Type = tileBuildMode;
+						}
 					}
 				}
 			}
@@ -143,12 +153,20 @@ public class MouseController : MonoBehaviour {
 	}
 
 	public void SetMode_BuildGround () {
+		buildModeIsObjects = false;
 		tileBuildMode = Tile.TileType.Ground;
 	}
 
+	public void SetMode_BuildInstalledObject ( string objectType) {
+		buildModeIsObjects = true;
+		buildmodeObjectType = objectType;
+	}
+
 	public void SetMode_Bulldoze () {
+		buildModeIsObjects = false;
 		tileBuildMode = Tile.TileType.Empty;
 	}
+
 }
 
 
