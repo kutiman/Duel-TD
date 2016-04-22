@@ -26,32 +26,11 @@ public class World {
 			}
 		}
 
-		// Creating the map of installed objects
+		// Creating the map of installedObject prototypes
 		installedObjectsPrototypes = new Dictionary<string, InstalledObject>();
 
-		InstalledObject wallPrototype = InstalledObject.CreatePrototype (
-			"Wall",
-			0, // impassable
-			1, // width
-			1 //height
-		);
-		installedObjectsPrototypes.Add("Wall", wallPrototype);
-
-		InstalledObject barrelPrototype = InstalledObject.CreatePrototype (
-			"Barrel",
-			0, // impassable
-			1, // width
-			1 //height
-		);
-		installedObjectsPrototypes.Add("Barrel", barrelPrototype);
-
-		InstalledObject Tree_Pine_01Prototype = InstalledObject.CreatePrototype (
-			"Tree_Pine_01",
-			0.5f, // impassable
-			1, // width
-			1 //height
-		);
-		installedObjectsPrototypes.Add("Tree_Pine_01", Tree_Pine_01Prototype);
+		installedObjectsPrototypes.Add ("Barrel", InstalledObject.CreatePrototype ("Barrel", 0, 1, 1));
+		installedObjectsPrototypes.Add ("Tree_Pine_01", InstalledObject.CreatePrototype ("Tree_Pine_01", 0, 1, 1));
 	}
 
 	public Tile GetTileAt (int x, int y) {
@@ -75,6 +54,7 @@ public class World {
 			return;
 		}
 
+		//in this stage, an installed object already exists in the tile, but it not yet assigned a visual gameobject
 		if(cbInstalledObjectCreated != null) {
 			cbInstalledObjectCreated(obj);
 		}

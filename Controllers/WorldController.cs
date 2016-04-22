@@ -12,6 +12,7 @@ public class WorldController : MonoBehaviour {
 	Dictionary <InstalledObject, GameObject> installedObjectGameObjectMap;
 	Dictionary <string, GameObject> itemsMap;
 
+	// this list is populated in the inspector. Takes all the items for installing in the game;
 	public GameObject[] itemsList;
 
 	public Sprite groundSprite;
