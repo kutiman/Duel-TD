@@ -9,7 +9,7 @@ public class WorldController : MonoBehaviour {
 	public World World {get; protected set;}
 
 	Dictionary <Tile, GameObject> tileGameObjectMap;
-	Dictionary <InstalledObject, GameObject> installedObjectGameObjectMap;
+	Dictionary <Immovable, GameObject> ImmovableGameObjectMap;
 	Dictionary <string, GameObject> itemsMap;
 
 	// this list is populated in the inspector. Takes all the items for installing in the game;
@@ -17,7 +17,7 @@ public class WorldController : MonoBehaviour {
 
 	public Sprite groundSprite;
 
-	void Start () {
+	void OnEnable () {
 
 		if (Instance != null) Debug.Log("Too many World controllers");
 		Instance = this;
@@ -25,10 +25,10 @@ public class WorldController : MonoBehaviour {
 		// create a new wrd with tiles
 		World = new World ();
 
-		World.RegisterInstalledObjectCreated (OnInstalledObjectCreated);
+		World.RegisterImmovableCreated (OnImmovableCreated);
 
 		tileGameObjectMap = new Dictionary <Tile, GameObject>();
-		installedObjectGameObjectMap = new Dictionary<InstalledObject, GameObject>();
+		ImmovableGameObjectMap = new Dictionary<Immovable, GameObject>();
 		itemsMap = PopulateItemsGameObjectsDictionary(itemsList);
 
 		// Creating a gameobject for each of the tiles
@@ -46,10 +46,10 @@ public class WorldController : MonoBehaviour {
 				tile_go.transform.SetParent(this.transform, true);
 				tile_go.transform.Rotate(Vector3.left * -90);
 
-				SpriteRenderer tile_sr = tile_go.AddComponent<SpriteRenderer> ();
+				tile_go.AddComponent<SpriteRenderer> ();
 
 				// register a tile changing type callback
-				tile_data.RegisterTileTypeChangedCallback( OnTileTypeChanged );
+				tile_data.RegisterTileChangedCallback( OnTileChanged );
 
 
 			}
@@ -60,7 +60,7 @@ public class WorldController : MonoBehaviour {
 
 	}
 
-	void OnTileTypeChanged (Tile tile_data) {
+	void OnTileChanged (Tile tile_data) {
 
 		if (tileGameObjectMap.ContainsKey (tile_data) == false) {
 			Debug.LogError ("tile_data does not exist in the dictionary. You need to assign one");
@@ -80,7 +80,7 @@ public class WorldController : MonoBehaviour {
 			tile_go.GetComponent<SpriteRenderer>().sprite = null;
 		}
 		else {
-			Debug.LogError("OnTileTypeChanged - Unrecognized tile type");
+			Debug.LogError("OnTileChanged - Unrecognized tile type");
 		}
 	}
 
@@ -91,22 +91,23 @@ public class WorldController : MonoBehaviour {
 		return World.GetTileAt(x, y);
 	}
 
-	public void OnInstalledObjectCreated (InstalledObject obj) {
+	public void OnImmovableCreated (Immovable obj) {
 
 		GameObject obj_go = Instantiate(itemsMap[obj.objectType]);
 
-		installedObjectGameObjectMap.Add(obj, obj_go);
+		ImmovableGameObjectMap.Add(obj, obj_go);
 
 		obj_go.name = obj.objectType + "_"+ obj.tile.X + "_" + obj.tile.Y;
 		obj_go.transform.position = new Vector3(obj.tile.X, 0, obj.tile.Y);
 		obj_go.transform.SetParent(this.transform, true);
 
+		// Debug
 
 		// register a tile changing type callback
-		obj.RegisterOnChangedCallback( OnInstalledObjectChanged );
+		obj.RegisterOnChangedCallback( OnImmovableChanged );
 	}
 
-	void OnInstalledObjectChanged (InstalledObject obj) {
+	void OnImmovableChanged (Immovable obj) {
 		Debug.LogError ("Not Implemented!");
 	}
 
@@ -114,7 +115,6 @@ public class WorldController : MonoBehaviour {
 		Dictionary <string, GameObject> dict = new Dictionary <string, GameObject> ();
 		foreach (GameObject obj in goArray) {
 			dict.Add (obj.name, obj);
-			Debug.Log(obj.name);
 		}
 		return dict;
 	}

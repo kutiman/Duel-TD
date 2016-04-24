@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class InstalledObject {
+public class Immovable {
 
 	public Tile tile {get; protected set;}
 
@@ -17,10 +17,10 @@ public class InstalledObject {
 	int width = 1;
 	int height = 1;
 
-	Action <InstalledObject> cbOnChanged;
+	Action <Immovable> cbOnChanged;
 
-	static public InstalledObject CreatePrototype (string objectType, float movementCost = 1f, int width = 1, int height = 1	) {
-		InstalledObject obj = new InstalledObject();
+	static public Immovable CreatePrototype (string objectType, float movementCost = 1f, int width = 1, int height = 1	) {
+		Immovable obj = new Immovable();
 
 		obj.objectType = objectType;
 		obj.movementCost = movementCost;
@@ -30,8 +30,8 @@ public class InstalledObject {
 		return obj;
 	}
 
-	static public InstalledObject PlaceInstance (InstalledObject proto, Tile tile) {
-		InstalledObject obj = new InstalledObject ();
+	static public Immovable PlaceInstance (Immovable proto, Tile tile) {
+		Immovable obj = new Immovable ();
 		//Debug.Log("PlaceInstance REACHED sUCCESSFULLY");
 		obj.objectType = proto.objectType;
 		obj.movementCost = proto.movementCost;
@@ -48,11 +48,11 @@ public class InstalledObject {
 		return obj;
 	}
 
-	public void RegisterOnChangedCallback (Action<InstalledObject> callbackfunk) {
+	public void RegisterOnChangedCallback (Action<Immovable> callbackfunk) {
 		cbOnChanged += callbackfunk;
 	}
 
-	public void UnregisterOnChangedCallback (Action<InstalledObject> callbackfunk) {
+	public void UnregisterOnChangedCallback (Action<Immovable> callbackfunk) {
 		cbOnChanged -= callbackfunk;
 	}
 }

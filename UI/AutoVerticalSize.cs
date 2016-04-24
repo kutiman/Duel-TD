@@ -6,7 +6,7 @@ public class AutoVerticalSize : MonoBehaviour {
 	public float childHeight = 30f;
 	// Use this for initialization
 	void Start () {
-
+		AdjustSize ();
 	}
 	
 	// Update is called once per frame

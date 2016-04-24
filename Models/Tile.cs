@@ -24,7 +24,7 @@ public class Tile {
 	}
 
 
-	InstalledObject installedObject;
+	Immovable Immovable;
 	LooseObject looseObject;
 
 	World world;
@@ -38,29 +38,29 @@ public class Tile {
 		this.Y = y;
 	}
 
-	public void RegisterTileTypeChangedCallback (Action<Tile> callback) {
+	public void RegisterTileChangedCallback (Action<Tile> callback) {
 		cbTileTypeChanged += callback;
 	}
 
-	public void UnregisterTileTypeChangedCallback (Action<Tile> callback) {
+	public void UnregisterTileChangedCallback (Action<Tile> callback) {
 		cbTileTypeChanged -= callback;
 	}
 
-	public bool PlaceObject (InstalledObject objInstance) {
+	public bool PlaceObject (Immovable objInstance) {
 		if (objInstance == null) {
 			// we are uninstalling the object that currently occupies the tile
-			installedObject = null;
+			Immovable = null;
 			return true;
 		}
 
 		// obj instance is null
-		if (installedObject != null) {
+		if (Immovable != null) {
 			return false;
 			//Debug.LogError("Trying to install and objInstance into an already taken tile");
 		}
 
 		// everything is fine here
-		installedObject = objInstance;
+		Immovable = objInstance;
 		return true;
 	}
 }

@@ -125,8 +125,8 @@ public class MouseController : MonoBehaviour {
 					Tile t = WorldController.Instance.World.GetTileAt (x, y);
 					if (t != null) {
 						if (buildModeIsObjects == true) {
-							// create an installed object in the tile
-							WorldController.Instance.World.PlaceInstalledObject(buildmodeObjectType, t);
+							// create an immovable in the tile
+							WorldController.Instance.World.PlaceImmovable(buildmodeObjectType, t);
 						}
 						else {
 							// change the tile
@@ -157,7 +157,7 @@ public class MouseController : MonoBehaviour {
 		tileBuildMode = Tile.TileType.Ground;
 	}
 
-	public void SetMode_BuildInstalledObject ( string objectType) {
+	public void SetMode_BuildImmovable ( string objectType) {
 		buildModeIsObjects = true;
 		buildmodeObjectType = objectType;
 	}
