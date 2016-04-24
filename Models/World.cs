@@ -9,9 +9,12 @@ public class World {
 	public int Width {get; protected set;}
 	public int Height {get; protected set;}
 
-	Action<InstalledObject> cbInstalledObjectCreated;
+	Action<Immovable> cbImmovableCreated;
+	Action<Tile> cbTileChanged;
 
-	Dictionary<string, InstalledObject> installedObjectsPrototypes; 
+	public Queue<Job> jobQueue;
+
+	Dictionary<string, Immovable> ImmovablesPrototypes; 
 
 	public World (int width = 30, int height = 30) {
 		this.Width = width;
@@ -23,14 +26,17 @@ public class World {
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				tiles[x, y] = new Tile(this, x, y);
+				tiles[x, y].RegisterTileChangedCallback ( OnTileChanged );
 			}
 		}
 
-		// Creating the map of installedObject prototypes
-		installedObjectsPrototypes = new Dictionary<string, InstalledObject>();
+		// Creating the map of Immovable prototypes
+		ImmovablesPrototypes = new Dictionary<string, Immovable>();
 
-		installedObjectsPrototypes.Add ("Barrel", InstalledObject.CreatePrototype ("Barrel", 0, 1, 1));
-		installedObjectsPrototypes.Add ("Tree_Pine_01", InstalledObject.CreatePrototype ("Tree_Pine_01", 0, 1, 1));
+		ImmovablesPrototypes.Add ("Barrel", Immovable.CreatePrototype ("Barrel", 0, 1, 1));
+		ImmovablesPrototypes.Add ("Tree_Pine", Immovable.CreatePrototype ("Tree_Pine", 0, 1, 1));
+		ImmovablesPrototypes.Add ("Cave", Immovable.CreatePrototype ("Cave", 0, 1, 1));
+		ImmovablesPrototypes.Add ("Tree_Gum", Immovable.CreatePrototype ("Tree_Gum", 0, 1, 1));
 	}
 
 	public Tile GetTileAt (int x, int y) {
@@ -41,31 +47,46 @@ public class World {
 		return tiles[x, y];
 	}
 
-	public void PlaceInstalledObject (string objectType, Tile t) {
-		if (installedObjectsPrototypes.ContainsKey (objectType) == false) {
-			Debug.LogError ("installedObjectsPrototypes doesnt contain an prototype for key " + objectType);
+	public void PlaceImmovable (string objectType, Tile t) {
+		if (ImmovablesPrototypes.ContainsKey (objectType) == false) {
+			Debug.LogError ("ImmovablesPrototypes doesnt contain an prototype for key " + objectType);
 			return;
 		}
 
-		InstalledObject obj = InstalledObject.PlaceInstance (installedObjectsPrototypes [objectType], t);
+		Immovable obj = Immovable.PlaceInstance (ImmovablesPrototypes [objectType], t);
 
 		if (obj == null) {
 			// Failed to place object -- most likely there was already something there.
 			return;
 		}
 
-		//in this stage, an installed object already exists in the tile, but it not yet assigned a visual gameobject
-		if(cbInstalledObjectCreated != null) {
-			cbInstalledObjectCreated(obj);
+		//in this stage, an immovable already exists in the tile, but it not yet assigned a visual gameobject
+		if(cbImmovableCreated != null) {
+			cbImmovableCreated(obj);
 		}
 	}
 
-	public void RegisterInstalledObjectCreated (Action<InstalledObject> callbackfunc) {
-		cbInstalledObjectCreated += callbackfunc;
+	public void RegisterImmovableCreated (Action<Immovable> callbackfunc) {
+		cbImmovableCreated += callbackfunc;
 	}
 
-	public void UnregisterInstalledObjectCreated (Action<InstalledObject> callbackfunc) {
-		cbInstalledObjectCreated -= callbackfunc;
+	public void UnregisterImmovableCreated (Action<Immovable> callbackfunc) {
+		cbImmovableCreated -= callbackfunc;
+	}
+
+	public void RegisterTileChanged (Action<Tile> callbackfunc) {
+		cbTileChanged += callbackfunc;
+	}
+
+	public void UnregisterTileChanged (Action<Tile> callbackfunc) {
+		cbTileChanged -= callbackfunc;
+	}
+
+	void OnTileChanged(Tile t) {
+		if(cbTileChanged == null)
+			return;
+		
+		cbTileChanged(t);
 	}
 
 }
