@@ -12,13 +12,13 @@ public class World {
 	Action<Immovable> cbImmovableCreated;
 	Action<Tile> cbTileChanged;
 
-	public Queue<Job> jobQueue;
+	public JobQueue jobQueue;
 
 	Dictionary<string, Immovable> ImmovablesPrototypes; 
 
 	public World (int width = 30, int height = 30) {
 
-		jobQueue = new Queue<Job>();
+		jobQueue = new JobQueue();
 
 		this.Width = width;
 		this.Height = height;

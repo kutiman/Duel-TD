@@ -18,12 +18,11 @@ public class BuildController : MonoBehaviour {
 
 			if (WorldController.Instance.world.IsImmovablePositionValid (t)) {
 
-				Job job = new Job (t, (theJob) => {WorldController.Instance.world.PlaceImmovable (immovableType, theJob.tile); } );
+				Job job = new Job (t, immovableType, (theJob) => {WorldController.Instance.world.PlaceImmovable (immovableType, theJob.tile); } );
 				WorldController.Instance.world.jobQueue.Enqueue (job);
 
 				t.jobPending = job;
 
-				Debug.Log("Queue size is: " + WorldController.Instance.world.jobQueue.Count);
 			}
 		}
 		else {

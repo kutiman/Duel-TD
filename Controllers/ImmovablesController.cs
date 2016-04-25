@@ -7,7 +7,7 @@ public class ImmovablesController : MonoBehaviour {
 	public World world { get { return WorldController.Instance.world; } }
 
 	Dictionary <Immovable, GameObject> ImmovableGameObjectMap;
-	Dictionary <string, GameObject> itemsMap;
+	public Dictionary <string, GameObject> itemsMap { get; protected set; }
 
 	// this list is populated in the inspector. Takes all the items for installing in the game;
 	public GameObject[] itemsList;
@@ -29,8 +29,6 @@ public class ImmovablesController : MonoBehaviour {
 		obj_go.name = obj.objectType + "_"+ obj.tile.X + "_" + obj.tile.Y;
 		obj_go.transform.position = new Vector3(obj.tile.X, 0, obj.tile.Y);
 		obj_go.transform.SetParent(this.transform, true);
-
-		// Debug
 
 		// register a tile changing type callback
 		obj.RegisterOnChangedCallback( OnImmovableChanged );
