@@ -4,7 +4,7 @@ using System;
 
 public class Job {
 
-	public Tile tile {get; protected set;}
+	public Tile tile { get; protected set; }
 
 	float jobTime = 1f;
 	Action<Job> cbJobComplete;
