@@ -25,8 +25,6 @@ public class MouseController : MonoBehaviour {
 		
 		currFramePosition = GetCurrentMousePosition ();
 
-		// showing the mouse marker
-		UpdateCursor ();
 		UpdateDragging ();
 		UpdatePanning();
 
@@ -42,23 +40,6 @@ public class MouseController : MonoBehaviour {
 		plane.Raycast(ray, out rayDistance);
 		Vector3 pos = ray.GetPoint(rayDistance);
 		return pos;
-	}
-
-	void UpdateCursor () {
-		// showing the mouse marker
-		Tile tileUnderMouse = WorldController.Instance.GetTileAtWorldCoord (currFramePosition);
-
-		if (cursorMarker != null) {
-
-			if (tileUnderMouse != null) {
-				cursorMarker.SetActive (true);
-				Vector3 markerPosition = new Vector3 (tileUnderMouse.X, 0, tileUnderMouse.Y);
-				cursorMarker.transform.position = markerPosition;
-			}
-			else {
-				cursorMarker.SetActive (false);
-			}
-		}
 	}
 
 	void UpdateDragging () {
