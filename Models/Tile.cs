@@ -19,15 +19,18 @@ public class Tile {
 			type = value;
 			if (cbTileTypeChanged != null && oldType != type) {
 				cbTileTypeChanged(this);
+
 			}
 		}
 	}
 
 
-	Immovable Immovable;
+	public Immovable Immovable { get; protected set; }
 	LooseObject looseObject;
 
 	World world;
+
+	public Job jobPending;
 
 	public int X {get; protected set;}
 	public int Y {get; protected set;}
@@ -63,6 +66,7 @@ public class Tile {
 		Immovable = objInstance;
 		return true;
 	}
+
 }
 
 

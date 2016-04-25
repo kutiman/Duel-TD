@@ -5,11 +5,6 @@ using UnityEngine.EventSystems;
 
 public class MouseController : MonoBehaviour {
 
-	Tile.TileType tileBuildMode = Tile.TileType.Ground;
-	string buildmodeObjectType;
-	bool buildModeIsObjects = false;
-
-
 	Vector3 lastFramePosition;
 	Vector3 currFramePosition;
 	Vector3 dragStartPosition;
@@ -105,7 +100,7 @@ public class MouseController : MonoBehaviour {
 
 			for (int x = start_x; x <= end_x; x++) {
 				for (int y = start_y; y <= end_y; y++) {
-					Tile t = WorldController.Instance.World.GetTileAt (x, y);
+					Tile t = WorldController.Instance.world.GetTileAt (x, y);
 					if (t != null) {
 						GameObject go = SimplePool.Spawn (cursorMarker, new Vector3 (x, 0.01f, y), Quaternion.identity);
 						go.transform.SetParent (this.transform, true);
@@ -119,19 +114,14 @@ public class MouseController : MonoBehaviour {
 		if (Input.GetMouseButtonUp (0) && isDragging) {
 
 			isDragging = false;
+			BuildController bc = GameObject.FindObjectOfType<BuildController>();
 			
 			for (int x = start_x; x <= end_x; x++) {
 				for (int y = start_y; y <= end_y; y++) {
-					Tile t = WorldController.Instance.World.GetTileAt (x, y);
+					Tile t = WorldController.Instance.world.GetTileAt (x, y);
 					if (t != null) {
-						if (buildModeIsObjects == true) {
-							// create an immovable in the tile
-							WorldController.Instance.World.PlaceImmovable(buildmodeObjectType, t);
-						}
-						else {
-							// change the tile
-							t.Type = tileBuildMode;
-						}
+						// call the build controller
+						bc.BuildStuff(t);
 					}
 				}
 			}
@@ -152,19 +142,10 @@ public class MouseController : MonoBehaviour {
 		Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, Mathf.Clamp(Camera.main.transform.position.y, 5f, 25f), Camera.main.transform.position.z);
 	}
 
-	public void SetMode_BuildGround () {
-		buildModeIsObjects = false;
-		tileBuildMode = Tile.TileType.Ground;
-	}
 
-	public void SetMode_BuildImmovable ( string objectType) {
-		buildModeIsObjects = true;
-		buildmodeObjectType = objectType;
-	}
+	void OnImmovableJobComplete (string immovableType, Tile t) {
+		WorldController.Instance.world.PlaceImmovable(immovableType, t);
 
-	public void SetMode_Bulldoze () {
-		buildModeIsObjects = false;
-		tileBuildMode = Tile.TileType.Empty;
 	}
 
 }

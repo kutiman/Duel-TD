@@ -17,6 +17,9 @@ public class World {
 	Dictionary<string, Immovable> ImmovablesPrototypes; 
 
 	public World (int width = 30, int height = 30) {
+
+		jobQueue = new Queue<Job>();
+
 		this.Width = width;
 		this.Height = height;
 
@@ -61,9 +64,10 @@ public class World {
 		}
 
 		//in this stage, an immovable already exists in the tile, but it not yet assigned a visual gameobject
-		if(cbImmovableCreated != null) {
-			cbImmovableCreated(obj);
+		if (cbImmovableCreated != null) {
+			cbImmovableCreated (obj);
 		}
+		
 	}
 
 	public void RegisterImmovableCreated (Action<Immovable> callbackfunc) {
@@ -85,8 +89,15 @@ public class World {
 	void OnTileChanged(Tile t) {
 		if(cbTileChanged == null)
 			return;
-		
 		cbTileChanged(t);
+	}
+
+	public bool IsImmovablePositionValid (Tile t) {
+		if (t.jobPending != null || t.Immovable != null) {
+			return false;
+		}
+
+		return true;
 	}
 
 }

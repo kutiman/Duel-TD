@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System;
 
-public class WorldController : MonoBehaviour {
+public class SpritesController : MonoBehaviour {
 
-	public static WorldController Instance { get; protected set; }
-	
-	public World world {get; protected set;}
+
+	public World world { get { return WorldController.Instance.world; } }
 
 	Dictionary <Tile, GameObject> tileGameObjectMap;
 	Dictionary <Immovable, GameObject> ImmovableGameObjectMap;
@@ -17,51 +16,16 @@ public class WorldController : MonoBehaviour {
 
 	public Sprite groundSprite;
 
-	void OnEnable () {
-
-		if (Instance != null) Debug.Log("Too many world controllers");
-		Instance = this;
-		
-		// create a new wrd with tiles
-		world = new World ();
-
-		// creating the job queue
-
-		world.RegisterImmovableCreated (OnImmovableCreated);
+	void Start () {
 
 		tileGameObjectMap = new Dictionary <Tile, GameObject>();
 		ImmovableGameObjectMap = new Dictionary<Immovable, GameObject>();
 		itemsMap = PopulateItemsGameObjectsDictionary(itemsList);
 
-		// Creating a gameobject for each of the tiles
-		for (int x = 0; x < world.Width; x++) {
-			for (int y = 0; y < world.Height; y++) {
+		world.RegisterImmovableCreated (OnImmovableCreated);
+		world.RegisterTileChanged (OnTileChanged);
 
-				Tile tile_data = world.GetTileAt (x, y);
-
-				GameObject tile_go = new GameObject ();
-
-				tileGameObjectMap.Add(tile_data, tile_go);
-
-				tile_go.name = "Tile_" + x + "_" + y;
-				tile_go.transform.position = new Vector3(tile_data.X, 0.01f, tile_data.Y);
-				tile_go.transform.SetParent(this.transform, true);
-				tile_go.transform.Rotate(Vector3.left * -90);
-
-				tile_go.AddComponent<SpriteRenderer> ();
-
-				// register a tile changing type callback
-				tile_data.RegisterTileChangedCallback( OnTileChanged );
-
-
-			}
-		}
-	}
-	
-	void Update () {
-
-	}
-
+	} 
 	void OnTileChanged (Tile tile_data) {
 
 		if (tileGameObjectMap.ContainsKey (tile_data) == false) {
@@ -86,14 +50,7 @@ public class WorldController : MonoBehaviour {
 		}
 	}
 
-	public Tile GetTileAtWorldCoord (Vector3 coord) {
-		int x = Mathf.FloorToInt(coord.x);
-		int y = Mathf.FloorToInt(coord.z);
-
-		return world.GetTileAt(x, y);
-	}
-
-	public void OnImmovableCreated (Immovable obj) {
+		public void OnImmovableCreated (Immovable obj) {
 
 		GameObject obj_go = Instantiate(itemsMap[obj.objectType]);
 

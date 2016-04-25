@@ -15,8 +15,8 @@ public class SoundController : MonoBehaviour {
 			audioSource = gameObject.AddComponent<AudioSource>();
 		}
 
-		WorldController.Instance.World.RegisterImmovableCreated(OnImmovableCreated);
-		WorldController.Instance.World.RegisterTileChanged(OnTileChanged);
+		WorldController.Instance.world.RegisterImmovableCreated(OnImmovableCreated);
+		WorldController.Instance.world.RegisterTileChanged(OnTileChanged);
 	}
 	
 	// Update is called once per frame
