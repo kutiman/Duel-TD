@@ -35,14 +35,21 @@ public class JobController : MonoBehaviour {
 			mr.materials = mats;
 		}
 
+		jobQueueObjectsMap.Add(j, jobObject);
 
 		j.RegisterJobCompleteCallback ( OnJobEnd );
 		j.RegisterJobCancelCallback ( OnJobEnd );
 
 	}
 
-	void OnJobEnd (Job j) {
-		
+	void OnJobEnd (Job job) {
+
+		GameObject job_go = jobQueueObjectsMap[job];
+
+		job.UnregisterJobCompleteCallback ( OnJobEnd );
+		job.UnregisterJobCancelCallback ( OnJobEnd );
+
+		Destroy(job_go);
 	}
 
 }

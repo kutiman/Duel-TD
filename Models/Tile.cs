@@ -28,7 +28,7 @@ public class Tile {
 	public Immovable Immovable { get; protected set; }
 	LooseObject looseObject;
 
-	World world;
+	public World world { get; protected set; }
 
 	public Job jobPending;
 
@@ -65,6 +65,17 @@ public class Tile {
 		// everything is fine here
 		Immovable = objInstance;
 		return true;
+	}
+
+	public bool IsNeighbor (Tile tile, bool checkDiagonal = false) {
+		// checking if a tile in neighboring this one
+		return Mathf.Abs(this.X - tile.X) + Mathf.Abs(this.Y - tile.Y) == 1;
+
+		if (checkDiagonal == true) {
+			return (Mathf.Abs(this.X - tile.X) == 1 && Mathf.Abs(this.Y - tile.Y) == 1);
+		}
+
+		return false;
 	}
 
 }

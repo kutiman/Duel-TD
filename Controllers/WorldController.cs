@@ -16,6 +16,13 @@ public class WorldController : MonoBehaviour {
 
 		// create a new world with tiles
 		world = new World ();
+
+		// setting the camera to the middle of the world
+		Camera.main.transform.position = new Vector3 (world.Width/2, Camera.main.transform.position.y, world.Height/2 + Camera.main.transform.position.z);
+	}
+
+	public void Update () {
+		world.Update(Time.deltaTime);
 	}
 	
 

@@ -27,6 +27,14 @@ public class Job {
 		cbJobCancel += cb;
 	}
 
+	public void UnregisterJobCompleteCallback (Action<Job> cb) {
+		cbJobComplete -= cb;
+	}
+
+	public void UnregisterJobCancelCallback (Action<Job> cb) {
+		cbJobCancel -= cb;
+	}
+
 	public void DoJob (float workTime) {
 		jobTime -= workTime;
 

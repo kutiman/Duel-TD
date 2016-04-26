@@ -5,12 +5,14 @@ using System;
 public class World {
 
 	Tile[,] tiles;
+	List<Character> characters;
 
 	public int Width {get; protected set;}
 	public int Height {get; protected set;}
 
 	Action<Immovable> cbImmovableCreated;
 	Action<Tile> cbTileChanged;
+	Action<Character> cbCharacterCreated;
 
 	public JobQueue jobQueue;
 
@@ -40,6 +42,15 @@ public class World {
 		ImmovablesPrototypes.Add ("Tree_Pine", Immovable.CreatePrototype ("Tree_Pine", 0, 1, 1));
 		ImmovablesPrototypes.Add ("Cave", Immovable.CreatePrototype ("Cave", 0, 1, 1));
 		ImmovablesPrototypes.Add ("Tree_Gum", Immovable.CreatePrototype ("Tree_Gum", 0, 1, 1));
+
+		characters = new List<Character>();
+
+	}
+
+	public void Update (float deltaTime) {
+		foreach (Character c in characters) {
+			c.Update (deltaTime);
+		}
 	}
 
 	public Tile GetTileAt (int x, int y) {
@@ -70,20 +81,39 @@ public class World {
 		
 	}
 
-	public void RegisterImmovableCreated (Action<Immovable> callbackfunc) {
-		cbImmovableCreated += callbackfunc;
+	public Character CreateCharacter (string characterType, Tile t) {
+		
+		Character c = new Character (t, characterType);
+		characters.Add (c);
+		if (cbCharacterCreated != null) {
+			cbCharacterCreated(c);
+		}
+
+		return c;
 	}
 
-	public void UnregisterImmovableCreated (Action<Immovable> callbackfunc) {
-		cbImmovableCreated -= callbackfunc;
+	public void RegisterImmovableCreated (Action<Immovable> cb) {
+		cbImmovableCreated += cb;
 	}
 
-	public void RegisterTileChanged (Action<Tile> callbackfunc) {
-		cbTileChanged += callbackfunc;
+	public void UnregisterImmovableCreated (Action<Immovable> cb) {
+		cbImmovableCreated -= cb;
 	}
 
-	public void UnregisterTileChanged (Action<Tile> callbackfunc) {
-		cbTileChanged -= callbackfunc;
+	public void RegisterCharacterCreated (Action<Character> cb) {
+		cbCharacterCreated += cb;
+	}
+
+	public void UnregisterCharacterCreated (Action<Character> cb) {
+		cbCharacterCreated -= cb;
+	}
+
+	public void RegisterTileChanged (Action<Tile> cb) {
+		cbTileChanged += cb;
+	}
+
+	public void UnregisterTileChanged (Action<Tile> cb) {
+		cbTileChanged -= cb;
 	}
 
 	void OnTileChanged(Tile t) {

@@ -111,16 +111,23 @@ public class MouseController : MonoBehaviour {
 
 	void UpdatePanning () {
 		// Panning camera if mouse buttons are held
+
+		float maxHeight = 25f;
+		float minHeigt = 4f;
 		if (Input.GetMouseButton (1) || Input.GetMouseButton (2)) {
 
 			Vector3 diff = lastFramePosition - currFramePosition;
-			Camera.main.transform.Translate(diff, Space.World);
+			Camera.main.transform.Translate (diff, Space.World);
 		}
 
-		float d = Input.GetAxis("Mouse ScrollWheel") * Camera.main.transform.position.y;
-		Camera.main.transform.Translate(new Vector3(0, d, 0), Space.World);
+		float d = Input.GetAxis ("Mouse ScrollWheel") * Camera.main.transform.position.y/2;
+		float posY = Camera.main.transform.position.y;
 
-		Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, Mathf.Clamp(Camera.main.transform.position.y, 5f, 25f), Camera.main.transform.position.z);
+		if ((posY - d <= minHeigt || posY - d >= maxHeight) == false) {
+			Camera.main.transform.Translate (Vector3.forward * d, Space.Self);
+		}
+
+		Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, Mathf.Clamp(Camera.main.transform.position.y, minHeigt, maxHeight), Camera.main.transform.position.z);
 	}
 
 

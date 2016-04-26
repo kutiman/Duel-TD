@@ -15,7 +15,7 @@ public class ImmovablesController : MonoBehaviour {
 	void Start () {
 
 		ImmovableGameObjectMap = new Dictionary<Immovable, GameObject>();
-		itemsMap = PopulateItemsGameObjectsDictionary(itemsList);
+		itemsMap = Utilities.PopulateGameObjectsDictionary(itemsList);
 
 		world.RegisterImmovableCreated (OnImmovableCreated);
 	} 
@@ -36,13 +36,5 @@ public class ImmovablesController : MonoBehaviour {
 
 	void OnImmovableChanged (Immovable obj) {
 		Debug.LogError ("Not Implemented!");
-	}
-
-	Dictionary <string, GameObject> PopulateItemsGameObjectsDictionary (GameObject[] goArray) {
-		Dictionary <string, GameObject> dict = new Dictionary <string, GameObject> ();
-		foreach (GameObject obj in goArray) {
-			dict.Add (obj.name, obj);
-		}
-		return dict;
 	}
 }

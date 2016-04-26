@@ -20,6 +20,14 @@ public class JobQueue {
 		}
 	}
 
+	public Job Dequeue () {
+		if (jobQueue.Count == 0) {
+			return null;
+		}
+
+		return jobQueue.Dequeue();
+	}
+
 	public void RegisterJobCreatedCallback (Action<Job> cbFunc) {
 		cbJobCreated += cbFunc;
 	}
@@ -27,5 +35,6 @@ public class JobQueue {
 	public void UnregisterJobCreatedCallback (Action<Job> cbFunc) {
 		cbJobCreated -= cbFunc;
 	}
+
 }
 
