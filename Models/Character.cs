@@ -71,6 +71,8 @@ public class Character {
 		movementPercentage += percThisFram;
 
 		if (movementPercentage >= 1) {
+			// get the next destination tile from the pathfinding system
+
 			currTile = destTile;
 			movementPercentage = 0;
 		}

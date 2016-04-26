@@ -19,7 +19,23 @@ public class CharacterController : MonoBehaviour {
 
 		// Debug
 		// FIXME remove this hard coded character name... remove it all actually.
-		Character c = world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
+		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
+		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
+		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
+		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
+		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
+		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
+		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
+		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
+		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
+		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
+		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
+		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
+		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
+		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
+		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
+		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
+
 //		c.SetDestination( world.GetTileAt(world.Width / 2 + 6, world.Height / 2 + 3));
 		///// end Debug
 	} 

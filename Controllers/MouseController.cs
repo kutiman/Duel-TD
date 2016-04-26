@@ -121,13 +121,13 @@ public class MouseController : MonoBehaviour {
 		}
 
 		float d = Input.GetAxis ("Mouse ScrollWheel") * Camera.main.transform.position.y/2;
-		float posY = Camera.main.transform.position.y;
+		Vector3 camPos = Camera.main.transform.position;
 
-		if ((posY - d <= minHeigt || posY - d >= maxHeight) == false) {
+		if ((camPos.y - d <= minHeigt || camPos.y - d >= maxHeight) == false) {
 			Camera.main.transform.Translate (Vector3.forward * d, Space.Self);
 		}
 
-		Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, Mathf.Clamp(Camera.main.transform.position.y, minHeigt, maxHeight), Camera.main.transform.position.z);
+		camPos = new Vector3(camPos.x, Mathf.Clamp(camPos.y, minHeigt, maxHeight), camPos.z);
 	}
 
 

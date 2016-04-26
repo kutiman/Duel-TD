@@ -6,7 +6,7 @@ public class ImmovablesController : MonoBehaviour {
 
 	public World world { get { return WorldController.Instance.world; } }
 
-	Dictionary <Immovable, GameObject> ImmovableGameObjectMap;
+	Dictionary <Immovable, GameObject> immovableGameObjectMap;
 	public Dictionary <string, GameObject> itemsMap { get; protected set; }
 
 	// this list is populated in the inspector. Takes all the items for installing in the game;
@@ -14,7 +14,7 @@ public class ImmovablesController : MonoBehaviour {
 
 	void Start () {
 
-		ImmovableGameObjectMap = new Dictionary<Immovable, GameObject>();
+		immovableGameObjectMap = new Dictionary<Immovable, GameObject>();
 		itemsMap = Utilities.PopulateGameObjectsDictionary(itemsList);
 
 		world.RegisterImmovableCreated (OnImmovableCreated);
@@ -24,7 +24,7 @@ public class ImmovablesController : MonoBehaviour {
 
 		GameObject obj_go = Instantiate(itemsMap[obj.objectType]);
 
-		ImmovableGameObjectMap.Add(obj, obj_go);
+		immovableGameObjectMap.Add(obj, obj_go);
 
 		obj_go.name = obj.objectType + "_"+ obj.tile.X + "_" + obj.tile.Y;
 		obj_go.transform.position = new Vector3(obj.tile.X, 0, obj.tile.Y);

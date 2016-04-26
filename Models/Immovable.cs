@@ -11,7 +11,7 @@ public class Immovable {
 	// multiplier for traversing through this obejct. Can be multiplied by the tile movement cost as well
 	// for example, a movement cost of 2 will take twice the time to traverse
 	// IMPORTANT: if equal to zero, objects is impassable (e.g. wall)
-	float movementCost = 1f;
+	public float movementCost {get; protected set;}
 
 	// size of the object, if does not take only one tile
 	int width = 1;

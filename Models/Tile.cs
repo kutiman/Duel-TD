@@ -25,7 +25,7 @@ public class Tile {
 	}
 
 
-	public Immovable Immovable { get; protected set; }
+	public Immovable immovable { get; protected set; }
 	LooseObject looseObject;
 
 	public World world { get; protected set; }
@@ -34,6 +34,17 @@ public class Tile {
 
 	public int X {get; protected set;}
 	public int Y {get; protected set;}
+
+	public float movementCost {
+		get { 
+			if (immovable == null) {
+				return 1;
+			}
+			else {
+				return immovable.movementCost;
+			}
+		}
+	}
 
 	public Tile (World world, int x, int y) {
 		this.world = world;
@@ -52,30 +63,64 @@ public class Tile {
 	public bool PlaceObject (Immovable objInstance) {
 		if (objInstance == null) {
 			// we are uninstalling the object that currently occupies the tile
-			Immovable = null;
+			immovable = null;
 			return true;
 		}
 
 		// obj instance is null
-		if (Immovable != null) {
+		if (immovable != null) {
 			return false;
 			//Debug.LogError("Trying to install and objInstance into an already taken tile");
 		}
 
 		// everything is fine here
-		Immovable = objInstance;
+		immovable = objInstance;
 		return true;
 	}
 
 	public bool IsNeighbor (Tile tile, bool checkDiagonal = false) {
 		// checking if a tile in neighboring this one
-		return Mathf.Abs(this.X - tile.X) + Mathf.Abs(this.Y - tile.Y) == 1;
+		return ( 
+			(Mathf.Abs(this.X - tile.X) + Mathf.Abs(this.Y - tile.Y) == 1) || 
+			(checkDiagonal == true && Mathf.Abs(this.X - tile.X) == 1 && Mathf.Abs(this.Y - tile.Y) == 1)
+		);
+	}
 
-		if (checkDiagonal == true) {
-			return (Mathf.Abs(this.X - tile.X) == 1 && Mathf.Abs(this.Y - tile.Y) == 1);
+	public Tile[] GetNeighbors (bool checkDiagonal = false) {
+		Tile[] ns;
+		// nighboring tiles could be null
+
+		if (checkDiagonal == false) {
+			ns = new Tile[4];
+		}
+		else {
+			ns = new Tile[8];
 		}
 
-		return false;
+		Tile n;
+
+		// order of neighbors is N E S W NE SE SW NW
+		n = world.GetTileAt (X, Y + 1);
+		ns [0] = n;
+		n = world.GetTileAt (X + 1, Y);
+		ns [1] = n;
+		n = world.GetTileAt (X, Y - 1);
+		ns [2] = n;
+		n = world.GetTileAt (X - 1, Y);
+		ns [3] = n;
+
+		if (checkDiagonal == true) {
+			n = world.GetTileAt (X + 1, Y + 1);
+			ns [4] = n;
+			n = world.GetTileAt (X + 1, Y - 1);
+			ns [5] = n;
+			n = world.GetTileAt (X - 1, Y - 1);
+			ns [6] = n;
+			n = world.GetTileAt (X - 1, Y + 1);
+			ns [7] = n;
+		}
+
+		return ns;
 	}
 
 }
