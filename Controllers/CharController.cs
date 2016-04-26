@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class CharacterController : MonoBehaviour {
+public class CharController : MonoBehaviour {
 
 	public World world { get { return WorldController.Instance.world; } }
 
@@ -20,21 +20,7 @@ public class CharacterController : MonoBehaviour {
 		// Debug
 		// FIXME remove this hard coded character name... remove it all actually.
 		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
-		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
-		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
-		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
-		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
-		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
-		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
-		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
-		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
-		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
-		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
-		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
-		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
-		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
-		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
-		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
+
 
 //		c.SetDestination( world.GetTileAt(world.Width / 2 + 6, world.Height / 2 + 3));
 		///// end Debug

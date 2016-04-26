@@ -57,7 +57,7 @@ public class BuildController : MonoBehaviour {
 	public void PathFindingTest () {
 		WorldController.Instance.world.CreateExampleWorld();
 
-		Path_TileGraph tileGraph = new Path_TileGraph(WorldController.Instance.world);
+		//Path_TileGraph tileGraph = new Path_TileGraph(WorldController.Instance.world);
 	}
 
 }

@@ -18,7 +18,14 @@ public class JobController : MonoBehaviour {
 	}
 	
 	void OnJobCreated (Job j) {
-		GameObject jobObject = (GameObject) Instantiate(ic.itemsMap[j.immovableType]);
+		GameObject jobObject = (GameObject)Instantiate (ic.itemsMap [j.immovableType]);
+
+		// FIXME
+		if (jobQueueObjectsMap.ContainsKey (j)) {
+			Debug.Log("OnJobCreated for job_go already exists -- probably RE-QUEUED");
+			return; 
+		}
+
 		MeshRenderer mr = jobObject.transform.GetChild(0).GetComponent<MeshRenderer>();
 		Destroy(jobObject.transform.GetChild(0).GetComponent<MeshCollider>());
 

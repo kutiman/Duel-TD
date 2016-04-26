@@ -41,7 +41,7 @@ public class Tile {
 				return 1;
 			}
 			else {
-				return immovable.movementCost;
+				return 1 * immovable.movementCost;
 			}
 		}
 	}
