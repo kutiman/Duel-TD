@@ -12,7 +12,7 @@ public class Path_TileGraph {
 
 	public Path_TileGraph (World world) {
 
-		Debug.Log("Path_TileGraph");
+		Debug.Log ("Path_TileGraph");
 		// looping thourh all the tiles in the world.
 		// for each tile, create a node
 		// do not create a node for a blocked tile
@@ -26,14 +26,14 @@ public class Path_TileGraph {
 
 				// tiles with a movement cost of 0 are unwalkable
 				//if (t.movementCost > 0) {
-					Path_Node<Tile> n = new Path_Node<Tile> ();
-					n.data = t;
-					nodes.Add (t, n);
+				Path_Node<Tile> n = new Path_Node<Tile> ();
+				n.data = t;
+				nodes.Add (t, n);
 				//}
 			}
 		}
 
-		Debug.Log("Path_TileGraph: Created "+nodes.Count+" nodes.");
+		Debug.Log ("Path_TileGraph: Created " + nodes.Count + " nodes.");
 
 		// now loop through all nodes again
 		// and create edges for neighbors
@@ -45,13 +45,17 @@ public class Path_TileGraph {
 			// for every walkable neighbor, create an edge
 			Path_Node<Tile> n = nodes [t];
 
-			List<Path_Edge<Tile>> edges = new List<Path_Edge<Tile>>();
+			List<Path_Edge<Tile>> edges = new List<Path_Edge<Tile>> ();
 
 			Tile[] neighbors = t.GetNeighbors (true);
 
 			for (int i = 0; i < neighbors.Length; i++) {
 				if (neighbors [i] != null && neighbors [i].movementCost > 0) {
 					// this neighbor exists and is walkable so crate an edge for it
+
+					if (IsClippingCorner (t, neighbors [i])) {
+						continue;
+					}
 
 					Path_Edge<Tile> e = new Path_Edge<Tile>();
 					e.cost = neighbors[i].movementCost;
