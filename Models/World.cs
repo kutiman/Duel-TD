@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
-public class World {
+public class World : IXmlSerializable {
 
 	Tile[,] tiles;
-	List<Character> characters;
+	public List<Character> characters;
+	public List<Immovable> immovables;
 
 	// path used to navigate the world
 	public Path_TileGraph tileGraph;
@@ -21,7 +25,13 @@ public class World {
 
 	Dictionary<string, Immovable> immovablesPrototypes; 
 
-	public World (int width = 30, int height = 30) {
+	public World (int width, int height) {
+
+		SetupWorld(width, height);
+
+	}
+
+	void SetupWorld (int width, int height) {
 
 		jobQueue = new JobQueue();
 
@@ -38,15 +48,10 @@ public class World {
 			}
 		}
 
-		// Creating the map of immovable prototypes
-		immovablesPrototypes = new Dictionary<string, Immovable>();
-
-		immovablesPrototypes.Add ("Barrel", Immovable.CreatePrototype ("Barrel", 0, 1, 1));
-		immovablesPrototypes.Add ("Tree_Pine", Immovable.CreatePrototype ("Tree_Pine", 0, 1, 1));
-		immovablesPrototypes.Add ("Cave", Immovable.CreatePrototype ("Cave", 0, 1, 1));
-		immovablesPrototypes.Add ("Tree_Gum", Immovable.CreatePrototype ("Tree_Gum", 0, 1, 1));
+		CreateImmovablePrototypes();
 
 		characters = new List<Character>();
+		immovables = new List<Immovable>();
 
 	}
 
@@ -64,24 +69,27 @@ public class World {
 		return tiles[x, y];
 	}
 
-	public void PlaceImmovable (string objectType, Tile t) {
+	public Immovable PlaceImmovable (string objectType, Tile t) {
 		if (immovablesPrototypes.ContainsKey (objectType) == false) {
 			Debug.LogError ("immovablesPrototypes doesnt contain an prototype for key " + objectType);
-			return;
+			return null;
 		}
 
-		Immovable obj = Immovable.PlaceInstance (immovablesPrototypes [objectType], t);
+		Immovable imvb = Immovable.PlaceInstance (immovablesPrototypes [objectType], t);
 
-		if (obj == null) {
+		if (imvb == null) {
 			// Failed to place object -- most likely there was already something there.
-			return;
+			return null;
 		}
 
+		immovables.Add(imvb);
 		//in this stage, an immovable already exists in the tile, but it not yet assigned a visual gameobject
 		if (cbImmovableCreated != null) {
-			cbImmovableCreated (obj);
+			cbImmovableCreated (imvb);
 			InvalidateTileGraph();
 		}
+
+		return imvb;
 		
 	}
 
@@ -140,6 +148,17 @@ public class World {
 		return true;
 	}
 
+	void CreateImmovablePrototypes () {
+
+		immovablesPrototypes = new Dictionary<string, Immovable>();
+
+		immovablesPrototypes.Add ("Barrel", Immovable.CreatePrototype ("Barrel", 0, 1, 1));
+		immovablesPrototypes.Add ("Tree_Pine", Immovable.CreatePrototype ("Tree_Pine", 0, 1, 1));
+		immovablesPrototypes.Add ("Cave", Immovable.CreatePrototype ("Cave", 0, 1, 1));
+		immovablesPrototypes.Add ("Tree_Gum", Immovable.CreatePrototype ("Tree_Gum", 0, 1, 1));
+
+	}
+
 	//----------------
 	// *** Testing ***
 	//----------------
@@ -154,4 +173,115 @@ public class World {
 			}
 		}
 	}
+
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	///
+	///												SAVE & LOAD
+	///
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// empty constructor for xml serialization
+	public World () {
+		
+	}
+
+	public XmlSchema GetSchema () {
+		return null;
+	}
+
+	public void WriteXml (XmlWriter writer) {
+		// save game info here
+		writer.WriteAttributeString ("Width", Width.ToString());
+		writer.WriteAttributeString ("Height", Height.ToString());
+
+		writer.WriteStartElement("Tiles");
+		for (int x = 0; x < Width; x++) {
+			for (int y = 0; y < Height; y++) {
+				writer.WriteStartElement("Tile");
+				tiles[x, y].WriteXml(writer);
+				writer.WriteEndElement();
+			}
+		}
+		writer.WriteEndElement();
+
+		writer.WriteStartElement("Immovables");
+		foreach (Immovable imvb in immovables) {
+			writer.WriteStartElement("Immovable");
+			imvb.WriteXml(writer);
+			writer.WriteEndElement();
+			
+		}
+		writer.WriteEndElement();
+
+		writer.WriteStartElement("Characters");
+		foreach (Character c in characters) {
+			writer.WriteStartElement("Character");
+			c.WriteXml(writer);
+			writer.WriteEndElement();
+			
+		}
+		writer.WriteEndElement();
+	}
+
+	public void ReadXml (XmlReader reader) {
+		// load game info here
+		int width = int.Parse (reader.GetAttribute ("Width"));
+		int height = int.Parse (reader.GetAttribute ("Height"));
+
+		Debug.Log("Reading the tilessssssssssssssssssssss");
+		SetupWorld (width, height);
+
+		while (reader.Read()) {
+			switch (reader.Name) {
+				case "Tiles":
+					ReadXml_Tiles(reader);
+					break;
+				case "Immovables":
+					ReadXml_Immovables(reader);
+					break;
+				case "Characters":
+					ReadXml_Characters(reader);
+					break;
+			}
+		}
+	}
+
+	void ReadXml_Tiles (XmlReader reader) {
+		while (reader.Read ()) {
+			if (reader.Name != "Tile")
+				return;
+
+			int x = int.Parse (reader.GetAttribute ("X"));
+			int y = int.Parse (reader.GetAttribute ("Y"));
+			tiles[x, y].ReadXml(reader);
+		}
+	}
+
+	void ReadXml_Immovables (XmlReader reader) {
+		while (reader.Read ()) {
+			if (reader.Name != "Immovable")
+				return;
+
+			int x = int.Parse (reader.GetAttribute ("X"));
+			int y = int.Parse (reader.GetAttribute ("Y"));
+
+			Immovable imvb = PlaceImmovable(reader.GetAttribute("ObjectType"), tiles[x, y]);
+			imvb.ReadXml(reader);
+		}
+	}
+
+	void ReadXml_Characters (XmlReader reader) {
+		while (reader.Read ()) {
+			if (reader.Name != "Character")
+				return;
+
+			int x = int.Parse (reader.GetAttribute ("X"));
+			int y = int.Parse (reader.GetAttribute ("Y"));
+
+			Character c = CreateCharacter(reader.GetAttribute("CharacterType"), tiles[x, y]);
+			c.ReadXml(reader);
+		}
+	}
+
 }

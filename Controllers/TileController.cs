@@ -15,8 +15,6 @@ public class TileController : MonoBehaviour {
 
 		tileGameObjectMap = new Dictionary <Tile, GameObject>();
 
-		world.RegisterTileChanged (OnTileChanged);
-
 		// Creating a gameobject for each of the tiles
 		for (int x = 0; x < world.Width; x++) {
 			for (int y = 0; y < world.Height; y++) {
@@ -34,9 +32,11 @@ public class TileController : MonoBehaviour {
 
 				tile_go.AddComponent<SpriteRenderer> ();
 
+				OnTileChanged(tile_data);
 			}
 		}
 
+		world.RegisterTileChanged (OnTileChanged);
 
 	} 
 	void OnTileChanged (Tile tile_data) {

@@ -18,6 +18,11 @@ public class ImmovablesController : MonoBehaviour {
 		itemsMap = Utilities.PopulateGameObjectsDictionary(itemsList);
 
 		world.RegisterImmovableCreated (OnImmovableCreated);
+
+		// go through existing immovables, as from save file...
+		foreach(Immovable imvb in world.immovables) {
+			OnImmovableCreated(imvb);
+		}
 	} 
 
 	public void OnImmovableCreated (Immovable obj) {

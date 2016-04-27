@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
-public class Character {
+public class Character : IXmlSerializable {
 
 	public string characterType {get; protected set;}
 	
@@ -139,6 +142,26 @@ public class Character {
 		}
 
 		myJob = null;
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	///
+	///												SAVE & LOAD
+	///
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public XmlSchema GetSchema () {
+		return null;
+	}
+
+	public void WriteXml (XmlWriter writer) {
+		writer.WriteAttributeString("X", currTile.X.ToString());
+		writer.WriteAttributeString("X", currTile.Y.ToString());
+		writer.WriteAttributeString("CharacterType", characterType);
+	}
+
+	public void ReadXml (XmlReader reader) {
+
 	}
 }
 

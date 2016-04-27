@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
-public class Tile {
+public class Tile : IXmlSerializable {
 
 	public enum TileType { Empty, Ground };
 
@@ -122,6 +125,34 @@ public class Tile {
 
 		return ns;
 	}
+
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	///
+	///												SAVE & LOAD
+	///
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// empty constructor for xml serialization
+//	public Tile () {
+//		
+//	}
+
+	public XmlSchema GetSchema () {
+		return null;
+	}
+
+	public void WriteXml (XmlWriter writer) {
+		writer.WriteAttributeString("X", X.ToString());
+		writer.WriteAttributeString("X", Y.ToString());
+		writer.WriteAttributeString("Type", ((int) Type).ToString());
+	}
+
+	public void ReadXml (XmlReader reader) {
+
+		type = (Tile.TileType) int.Parse(reader.GetAttribute("Type"));
+	}
+
 
 }
 

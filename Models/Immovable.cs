@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
-public class Immovable {
+public class Immovable : IXmlSerializable {
 
 	public Tile tile {get; protected set;}
 
@@ -54,5 +57,25 @@ public class Immovable {
 
 	public void UnregisterOnChangedCallback (Action<Immovable> callbackfunk) {
 		cbOnChanged -= callbackfunk;
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	///
+	///												SAVE & LOAD
+	///
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public XmlSchema GetSchema () {
+		return null;
+	}
+
+	public void WriteXml (XmlWriter writer) {
+		writer.WriteAttributeString("X", tile.X.ToString());
+		writer.WriteAttributeString("X", tile.Y.ToString());
+		writer.WriteAttributeString("ObjectType", objectType);
+	}
+
+	public void ReadXml (XmlReader reader) {
+
 	}
 }

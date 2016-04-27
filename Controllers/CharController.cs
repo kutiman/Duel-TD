@@ -21,9 +21,9 @@ public class CharController : MonoBehaviour {
 		// FIXME remove this hard coded character name... remove it all actually.
 		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
 
-
-//		c.SetDestination( world.GetTileAt(world.Width / 2 + 6, world.Height / 2 + 3));
-		///// end Debug
+		foreach(Character c in world.characters) {
+			OnCharacterCreated(c);
+		}
 	} 
 
 	public void OnCharacterCreated (Character c) {
