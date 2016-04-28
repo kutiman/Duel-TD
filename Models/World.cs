@@ -256,42 +256,51 @@ public class World : IXmlSerializable {
 
 	void ReadXml_Tiles (XmlReader reader) {
 		Debug.Log("ReadXml_Tiles");
-		while (reader.Read ()) {
-			if (reader.Name != "Tile")
-				return;
 
-			int x = int.Parse (reader.GetAttribute ("X"));
-			int y = int.Parse (reader.GetAttribute ("Y"));
-			tiles[x, y].ReadXml(reader);
+		if (reader.ReadToDescendant("Tile")) {
+
+			do {
+				int x = int.Parse (reader.GetAttribute ("X"));
+				int y = int.Parse (reader.GetAttribute ("Y"));
+				tiles[x, y].ReadXml(reader);
+			} while(reader.ReadToNextSibling("Tile"));
+
+
 		}
 	}
 
 	void ReadXml_Immovables (XmlReader reader) {
 		Debug.Log("ReadXml_Immovables");
-		while (reader.Read ()) {
-			if (reader.Name != "Immovable")
-				return;
 
-			int x = int.Parse (reader.GetAttribute ("X"));
-			int y = int.Parse (reader.GetAttribute ("Y"));
+		if (reader.ReadToDescendant("Immovable")) {
 
-			Immovable imvb = PlaceImmovable(reader.GetAttribute("ObjectType"), tiles[x, y]);
-			imvb.ReadXml(reader);
+			do {
+				int x = int.Parse (reader.GetAttribute ("X"));
+				int y = int.Parse (reader.GetAttribute ("Y"));
+
+				Immovable imvb = PlaceImmovable(reader.GetAttribute("ObjectType"), tiles[x, y]);
+				imvb.ReadXml(reader);
+
+			} while(reader.ReadToNextSibling("Immovable"));
 		}
+
 	}
 
 	void ReadXml_Characters (XmlReader reader) {
 		Debug.Log("ReadXml_Characters");
-		while (reader.Read ()) {
-			if (reader.Name != "Character")
-				return;
 
-			int x = int.Parse (reader.GetAttribute ("X"));
-			int y = int.Parse (reader.GetAttribute ("Y"));
+		if (reader.ReadToDescendant("Character")) {
 
-			Character c = CreateCharacter(reader.GetAttribute("CharacterType"), tiles[x, y]);
-			c.ReadXml(reader);
+			do {
+				int x = int.Parse (reader.GetAttribute ("X"));
+				int y = int.Parse (reader.GetAttribute ("Y"));
+
+				Character c = CreateCharacter(reader.GetAttribute("CharacterType"), tiles[x, y]);
+				c.ReadXml(reader);
+
+			} while(reader.ReadToNextSibling("Character"));
 		}
+
 	}
 
 }

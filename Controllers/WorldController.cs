@@ -84,8 +84,7 @@ public class WorldController : MonoBehaviour {
 		Debug.Log(PlayerPrefs.GetString("SaveGame00"));
 		TextReader reader = new StringReader(PlayerPrefs.GetString("SaveGame00"));
 		world = (World) serializer.Deserialize(reader);
-		if (world == null) CreateEmptyWorld();
-		Debug.LogError("world came back null from save file");
+		if (world == null) Debug.LogError("world came back null from save file");
 		reader.Close();
 
 		// setting the camera to the middle of the world
