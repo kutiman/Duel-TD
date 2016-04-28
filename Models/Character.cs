@@ -15,7 +15,7 @@ public class Character : IXmlSerializable {
 	Path_AStar pathAStar;
 
 	float movementPercentage;
-	float speed = 4f;
+	float speed = 10f;
 
 	Action<Character> cbCharacterMoved;
 	

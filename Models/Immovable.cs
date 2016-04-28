@@ -1,11 +1,20 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using System;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
 public class Immovable : IXmlSerializable {
+
+	public Dictionary<string, object> imvbParamaters;
+	public Action<Immovable, float> updateActions;
+
+	public void Update(float deltaTime) {
+		if(updateActions != null) {
+			updateActions(this, deltaTime);
+		}
+	}
 
 	public Tile tile {get; protected set;}
 
@@ -17,29 +26,47 @@ public class Immovable : IXmlSerializable {
 	public float movementCost {get; protected set;}
 
 	// size of the object, if does not take only one tile
-	int width = 1;
-	int height = 1;
+	int width;
+	int height;
 
 	Action <Immovable> cbOnChanged;
 
-	static public Immovable CreatePrototype (string objectType, float movementCost = 1f, int width = 1, int height = 1	) {
-		Immovable obj = new Immovable();
+	// empty constructor for xml serialization
+	public Immovable () {
+		imvbParamaters = new Dictionary<string, object>();
+	}
 
-		obj.objectType = objectType;
-		obj.movementCost = movementCost;
-		obj.width = width;
-		obj.height = height;
+	/// Copy constructor
+	protected Immovable (Immovable other) {
 
-		return obj;
+		this.objectType = other.objectType;
+		this.movementCost = other.movementCost;
+		this.width = other.width;
+		this.height = other.height;
+
+		this.imvbParamaters = new Dictionary<string, object> (other.imvbParamaters);
+
+		if (other.updateActions != null) {
+			this.updateActions = (Action<Immovable, float>)other.updateActions.Clone();
+		}
+	}
+
+	virtual public Immovable Clone () {
+		return new Immovable(this);
+	}
+
+	public Immovable (string objectType, float movementCost = 1f, int width = 1, int height = 1	) {
+		this.objectType = objectType;
+		this.movementCost = movementCost;
+		this.width = width;
+		this.height = height;
+
+		imvbParamaters = new Dictionary<string, object>();
 	}
 
 	static public Immovable PlaceInstance (Immovable proto, Tile tile) {
-		Immovable obj = new Immovable ();
-		//Debug.Log("PlaceInstance REACHED sUCCESSFULLY");
-		obj.objectType = proto.objectType;
-		obj.movementCost = proto.movementCost;
-		obj.width = proto.width;
-		obj.height = proto.height;
+
+		Immovable obj = proto.Clone();
 
 		obj.tile = tile;
 
@@ -64,10 +91,6 @@ public class Immovable : IXmlSerializable {
 	///												SAVE & LOAD
 	///
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	public Immovable () {
-
-	}
 
 	public XmlSchema GetSchema () {
 		return null;

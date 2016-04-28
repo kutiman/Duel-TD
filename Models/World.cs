@@ -154,10 +154,14 @@ public class World : IXmlSerializable {
 
 		immovablesPrototypes = new Dictionary<string, Immovable>();
 
-		immovablesPrototypes.Add ("Barrel", Immovable.CreatePrototype ("Barrel", 0, 1, 1));
-		immovablesPrototypes.Add ("Tree_Pine", Immovable.CreatePrototype ("Tree_Pine", 0, 1, 1));
-		immovablesPrototypes.Add ("Cave", Immovable.CreatePrototype ("Cave", 0, 1, 1));
-		immovablesPrototypes.Add ("Tree_Gum", Immovable.CreatePrototype ("Tree_Gum", 0, 1, 1));
+		immovablesPrototypes.Add ("Barrel", new Immovable ("Barrel", 0, 1, 1));
+		immovablesPrototypes.Add ("Tree_Pine", new Immovable ("Tree_Pine", 2, 1, 1));
+		immovablesPrototypes.Add ("Cave", new Immovable ("Cave", 0, 1, 1));
+		immovablesPrototypes.Add ("Tree_Gum", new Immovable ("Tree_Gum", 0.5f, 1, 1));
+		immovablesPrototypes.Add ("Turret", new Immovable ("Turret", 0, 1, 1));
+
+		immovablesPrototypes["Turret"].imvbParamaters["openess"] = 0;
+		immovablesPrototypes["Turret"].updateActions += ImmovableActions.Turret_UpdateAction;
 
 	}
 

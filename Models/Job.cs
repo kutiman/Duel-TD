@@ -8,11 +8,11 @@ public class Job {
 
 	public string immovableType { get; protected set; }
 
-	float jobTime = 1f;
+	float jobTime;
 	Action<Job> cbJobComplete;
 	Action<Job> cbJobCancel;
 
-	public Job (Tile tile, string immovableType, Action<Job> cbJobComplete, float jobTime = 1f) {
+	public Job (Tile tile, string immovableType, Action<Job> cbJobComplete, float jobTime = 0.1f) {
 		this.tile = tile;
 		this.immovableType = immovableType;
 		this.jobTime = jobTime;
