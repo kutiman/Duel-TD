@@ -9,8 +9,8 @@ public class Path_AStar {
 
 	public Path_AStar (World world, Tile tileStart, Tile tileEnd) {
 
-		if(world.tileGraph == null) {
-			world.tileGraph = new Path_TileGraph(world);
+		if (world.tileGraph == null) {
+			world.tileGraph = new Path_TileGraph (world);
 		}
 
 		Dictionary<Tile, Path_Node<Tile>> nodes = world.tileGraph.nodes;
@@ -57,7 +57,7 @@ public class Path_AStar {
 				// we have reached our goal
 				// convert this into an actual sequence of tiles
 				// then end the search
-				reconstruct_path(Came_From, current);
+				reconstruct_path (Came_From, current);
 				return;
 			}
 
@@ -71,20 +71,23 @@ public class Path_AStar {
 					continue;
 				}
 
-				float movement_cost_to_neighbor = neighbor.data.movementCost * heuristc_cost_estimate(current, neighbor);
+				float movement_cost_to_neighbor = neighbor.data.movementCost * dist_between (current, neighbor);
 
-				float tentative_g_score = g_score[current] + movement_cost_to_neighbor;
+				float tentative_g_score = g_score [current] + movement_cost_to_neighbor;
 
-				if (OpenSet.Contains (neighbor) && tentative_g_score >= g_score[neighbor]) {
+				if (OpenSet.Contains (neighbor) && tentative_g_score >= g_score [neighbor]) {
 					continue;
 				}
 
-				Came_From[neighbor] = current;
-				g_score[neighbor] = tentative_g_score;
-				f_score[neighbor] = g_score[neighbor] + heuristc_cost_estimate(neighbor, goal);
+				Came_From [neighbor] = current;
+				g_score [neighbor] = tentative_g_score;
+				f_score [neighbor] = g_score [neighbor] + heuristc_cost_estimate (neighbor, goal);
 
 				if (OpenSet.Contains (neighbor) == false) {
-					OpenSet.Enqueue(neighbor, f_score[neighbor]);
+					OpenSet.Enqueue (neighbor, f_score [neighbor]);
+				}
+				else {
+					OpenSet.UpdatePriority(neighbor, f_score [neighbor]);
 				}
 			}
 		}
@@ -118,27 +121,27 @@ public class Path_AStar {
 		);
 	}
 
-//	float dist_between( Path_Node<Tile> a, Path_Node<Tile> b ) {
-//		// We can make assumptions because we know we're working
-//		// on a grid at this point.
-//
-//		// Hori/Vert neighbours have a distance of 1
-//		if( Mathf.Abs( a.data.X - b.data.X ) + Mathf.Abs( a.data.Y - b.data.Y ) == 1 ) {
-//			return 1f;
-//		}
-//
-//		// Diag neighbours have a distance of 1.41421356237	
-//		if( Mathf.Abs( a.data.X - b.data.X ) == 1 && Mathf.Abs( a.data.Y - b.data.Y ) == 1 ) {
-//			return 1.41421356237f;
-//		}
-//
-//		// Otherwise, do the actual math.
-//		return Mathf.Sqrt(
-//			Mathf.Pow(a.data.X - b.data.X, 2) +
-//			Mathf.Pow(a.data.Y - b.data.Y, 2)
-//		);
-//
-//	}
+	float dist_between( Path_Node<Tile> a, Path_Node<Tile> b ) {
+		// We can make assumptions because we know we're working
+		// on a grid at this point.
+
+		// Hori/Vert neighbours have a distance of 1
+		if( Mathf.Abs( a.data.X - b.data.X ) + Mathf.Abs( a.data.Y - b.data.Y ) == 1 ) {
+			return 1f;
+		}
+
+		// Diag neighbours have a distance of 1.41421356237	
+		if( Mathf.Abs( a.data.X - b.data.X ) == 1 && Mathf.Abs( a.data.Y - b.data.Y ) == 1 ) {
+			return 1.41421356237f;
+		}
+
+		// Otherwise, do the actual math.
+		return Mathf.Sqrt(
+			Mathf.Pow(a.data.X - b.data.X, 2) +
+			Mathf.Pow(a.data.Y - b.data.Y, 2)
+		);
+
+	}
 
 	public int Length () {
 		if (path == null) return 0;

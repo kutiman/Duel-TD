@@ -160,7 +160,7 @@ public class World : IXmlSerializable {
 		immovablesPrototypes.Add ("Tree_Gum", new Immovable ("Tree_Gum", 0.5f, 1, 1));
 		immovablesPrototypes.Add ("Turret", new Immovable ("Turret", 0, 1, 1));
 
-		immovablesPrototypes["Turret"].imvbParamaters["openess"] = 0;
+		immovablesPrototypes["Turret"].imvbParameters["shoot_speed"] = 0;
 		immovablesPrototypes["Turret"].updateActions += ImmovableActions.Turret_UpdateAction;
 
 	}

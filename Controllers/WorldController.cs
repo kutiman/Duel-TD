@@ -29,8 +29,12 @@ public class WorldController : MonoBehaviour {
 	}
 
 	public void Update () {
-		world.Update(Time.deltaTime);
+		world.Update (Time.deltaTime);
 
+		// FIXME: ake out the quitting from here
+		if (Input.GetKeyDown (KeyCode.Escape)) {
+			QuitGame();
+		}
 	}
 
 	void CreateEmptyWorld () {
@@ -93,5 +97,8 @@ public class WorldController : MonoBehaviour {
 
 	//////////////////////////////////
 
+	public void QuitGame () {
+		Application.Quit();
+	}
 
 }

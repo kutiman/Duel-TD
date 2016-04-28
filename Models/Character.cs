@@ -83,27 +83,38 @@ public class Character : IXmlSerializable {
 
 		if (nextTile == null || nextTile == currTile) {
 			// get the next tile from the pathfinder
-			if (pathAStar == null || pathAStar.Length() == 0) {
+			if (pathAStar == null || pathAStar.Length () == 0) {
 				// generate a new path to our destination
 				pathAStar = new Path_AStar (WorldController.Instance.world, currTile, destTile);
 				if (pathAStar.Length () == 0) {
 					Debug.LogError ("pathAStar returned no path to destination");
 					// FIXME: the job should be re-enqued
-					AbandonJob();
+					AbandonJob ();
 					pathAStar = null;
 					return;
 				}
+				pathAStar.Dequeue ();
 			}
+			// FIXME: discarding the first node, the current tile of the character
+			// from the pathfinding system. Maybe there's a better way?
+
 
 			nextTile = pathAStar.Dequeue ();
 
 			if (nextTile == currTile) {
-				Debug.LogError("Update_DoMovement: nextTile is currTile?");
+				Debug.LogError ("Update_DoMovement: nextTile is currTile?");
 			}
 		}
 
 		float distToTravel = Mathf.Sqrt (Mathf.Pow (currTile.X - nextTile.X, 2) + Mathf.Pow (currTile.Y - nextTile.Y, 2));
-		float percThisFram = (speed * deltaTime) / distToTravel;
+
+		if (nextTile.movementCost == 0) {
+			Debug.LogError("character trying to traverse an unwalkble tile");
+			nextTile = null;
+			pathAStar = null;
+			return;
+		}
+		float percThisFram = (speed * deltaTime) / (distToTravel * nextTile.movementCost);
 
 		movementPercentage += percThisFram;
 

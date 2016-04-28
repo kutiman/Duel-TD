@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 public class Immovable : IXmlSerializable {
 
-	public Dictionary<string, object> imvbParamaters;
+	public Dictionary<string, float> imvbParameters;
 	public Action<Immovable, float> updateActions;
 
 	public void Update(float deltaTime) {
@@ -33,7 +33,7 @@ public class Immovable : IXmlSerializable {
 
 	// empty constructor for xml serialization
 	public Immovable () {
-		imvbParamaters = new Dictionary<string, object>();
+		imvbParameters = new Dictionary<string, float>();
 	}
 
 	/// Copy constructor
@@ -44,7 +44,7 @@ public class Immovable : IXmlSerializable {
 		this.width = other.width;
 		this.height = other.height;
 
-		this.imvbParamaters = new Dictionary<string, object> (other.imvbParamaters);
+		this.imvbParameters = new Dictionary<string, float> (other.imvbParameters);
 
 		if (other.updateActions != null) {
 			this.updateActions = (Action<Immovable, float>)other.updateActions.Clone();
@@ -61,7 +61,7 @@ public class Immovable : IXmlSerializable {
 		this.width = width;
 		this.height = height;
 
-		imvbParamaters = new Dictionary<string, object>();
+		imvbParameters = new Dictionary<string, float>();
 	}
 
 	static public Immovable PlaceInstance (Immovable proto, Tile tile) {
@@ -100,9 +100,25 @@ public class Immovable : IXmlSerializable {
 		writer.WriteAttributeString("X", tile.X.ToString());
 		writer.WriteAttributeString("Y", tile.Y.ToString());
 		writer.WriteAttributeString("ObjectType", objectType);
+
+		foreach (string k in imvbParameters.Keys) {
+			writer.WriteStartElement("Param");
+			writer.WriteAttributeString("name", k);
+			writer.WriteAttributeString("value", imvbParameters[k].ToString());
+			writer.WriteEndElement();
+		}
 	}
 
 	public void ReadXml (XmlReader reader) {
+		if (reader.ReadToDescendant("Param")) {
 
+			do {
+				string k = reader.GetAttribute("name"); //int.Parse (reader.GetAttribute ("X"));
+				float v = float.Parse (reader.GetAttribute("value"));
+				imvbParameters[k] = v;
+			} while(reader.ReadToNextSibling("Param"));
+
+
+		}
 	}
 }
