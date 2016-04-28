@@ -65,13 +65,17 @@ public class Immovable : IXmlSerializable {
 	///
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	public Immovable () {
+
+	}
+
 	public XmlSchema GetSchema () {
 		return null;
 	}
 
 	public void WriteXml (XmlWriter writer) {
 		writer.WriteAttributeString("X", tile.X.ToString());
-		writer.WriteAttributeString("X", tile.Y.ToString());
+		writer.WriteAttributeString("Y", tile.Y.ToString());
 		writer.WriteAttributeString("ObjectType", objectType);
 	}
 

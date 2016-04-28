@@ -18,7 +18,6 @@ public class WorldController : MonoBehaviour {
 		if (Instance != null) Debug.Log ("Too many world controllers");
 
 		Instance = this;
-
 		// create a new world with tiles
 		if (loadWorld == true) {
 			loadWorld = false;
@@ -31,11 +30,12 @@ public class WorldController : MonoBehaviour {
 
 	public void Update () {
 		world.Update(Time.deltaTime);
+
 	}
 
 	void CreateEmptyWorld () {
 		world = new World (100, 100);
-
+		Debug.Log("Created a new world!");
 		// setting the camera to the middle of the world
 		Camera.main.transform.position = new Vector3 (world.Width/2, Camera.main.transform.position.y, world.Height/2 + Camera.main.transform.position.z);
 	}
@@ -63,9 +63,13 @@ public class WorldController : MonoBehaviour {
 		serializer.Serialize(writer, world);
 		writer.Close();
 
-		Debug.Log(writer.ToString());
-
 		PlayerPrefs.SetString("SaveGame00", writer.ToString());
+
+		Debug.Log(PlayerPrefs.GetString("SaveGame00"));
+
+		StreamWriter sr = File.CreateText("MyFile.txt");
+		sr.WriteLine ( writer.ToString());
+        sr.Close();
 	}
 
 	public void LoadWorld () {
@@ -77,13 +81,18 @@ public class WorldController : MonoBehaviour {
 	void CreateWorldFromSave () {
 
 		XmlSerializer serializer = new XmlSerializer(typeof(World));
+		Debug.Log(PlayerPrefs.GetString("SaveGame00"));
 		TextReader reader = new StringReader(PlayerPrefs.GetString("SaveGame00"));
-		Debug.Log(reader.ToString());
 		world = (World) serializer.Deserialize(reader);
+		if (world == null) CreateEmptyWorld();
+		Debug.LogError("world came back null from save file");
 		reader.Close();
 
 		// setting the camera to the middle of the world
 		Camera.main.transform.position = new Vector3 (world.Width/2, Camera.main.transform.position.y, world.Height/2 + Camera.main.transform.position.z);
 	}
+
+	//////////////////////////////////
+
 
 }

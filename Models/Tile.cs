@@ -134,9 +134,9 @@ public class Tile : IXmlSerializable {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// empty constructor for xml serialization
-//	public Tile () {
-//		
-//	}
+	public Tile () {
+		
+	}
 
 	public XmlSchema GetSchema () {
 		return null;
@@ -144,13 +144,13 @@ public class Tile : IXmlSerializable {
 
 	public void WriteXml (XmlWriter writer) {
 		writer.WriteAttributeString("X", X.ToString());
-		writer.WriteAttributeString("X", Y.ToString());
+		writer.WriteAttributeString("Y", Y.ToString());
 		writer.WriteAttributeString("Type", ((int) Type).ToString());
 	}
 
 	public void ReadXml (XmlReader reader) {
 
-		type = (Tile.TileType) int.Parse(reader.GetAttribute("Type"));
+		Type = (Tile.TileType) int.Parse(reader.GetAttribute("Type"));
 	}
 
 

@@ -5,7 +5,7 @@ using System;
 public class TileController : MonoBehaviour {
 
 
-	public World world { get { return WorldController.Instance.world; } }
+	World world { get { return WorldController.Instance.world; } }
 
 	Dictionary <Tile, GameObject> tileGameObjectMap;
 

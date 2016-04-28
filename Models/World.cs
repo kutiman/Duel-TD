@@ -29,14 +29,16 @@ public class World : IXmlSerializable {
 
 		SetupWorld(width, height);
 
+		CreateCharacter("Char1", GetTileAt(Width / 2, Height / 2));
+
 	}
 
 	void SetupWorld (int width, int height) {
 
 		jobQueue = new JobQueue();
 
-		this.Width = width;
-		this.Height = height;
+		Width = width;
+		Height = height;
 
 		tiles = new Tile[width, height];
 
@@ -225,12 +227,13 @@ public class World : IXmlSerializable {
 	}
 
 	public void ReadXml (XmlReader reader) {
+		Debug.Log("World :: ReadXml");
 		// load game info here
-		int width = int.Parse (reader.GetAttribute ("Width"));
-		int height = int.Parse (reader.GetAttribute ("Height"));
+		Width = int.Parse (reader.GetAttribute ("Width"));
+		Height = int.Parse (reader.GetAttribute ("Height"));
 
-		Debug.Log("Reading the tilessssssssssssssssssssss");
-		SetupWorld (width, height);
+
+		SetupWorld (Width, Height);
 
 		while (reader.Read()) {
 			switch (reader.Name) {
@@ -248,6 +251,7 @@ public class World : IXmlSerializable {
 	}
 
 	void ReadXml_Tiles (XmlReader reader) {
+		Debug.Log("ReadXml_Tiles");
 		while (reader.Read ()) {
 			if (reader.Name != "Tile")
 				return;
@@ -259,6 +263,7 @@ public class World : IXmlSerializable {
 	}
 
 	void ReadXml_Immovables (XmlReader reader) {
+		Debug.Log("ReadXml_Immovables");
 		while (reader.Read ()) {
 			if (reader.Name != "Immovable")
 				return;
@@ -272,6 +277,7 @@ public class World : IXmlSerializable {
 	}
 
 	void ReadXml_Characters (XmlReader reader) {
+		Debug.Log("ReadXml_Characters");
 		while (reader.Read ()) {
 			if (reader.Name != "Character")
 				return;

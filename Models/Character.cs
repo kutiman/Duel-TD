@@ -150,13 +150,17 @@ public class Character : IXmlSerializable {
 	///
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	public Character () {
+		
+	}
+
 	public XmlSchema GetSchema () {
 		return null;
 	}
 
 	public void WriteXml (XmlWriter writer) {
 		writer.WriteAttributeString("X", currTile.X.ToString());
-		writer.WriteAttributeString("X", currTile.Y.ToString());
+		writer.WriteAttributeString("Y", currTile.Y.ToString());
 		writer.WriteAttributeString("CharacterType", characterType);
 	}
 

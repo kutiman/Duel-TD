@@ -17,10 +17,6 @@ public class CharController : MonoBehaviour {
 		CharactersMap = Utilities.PopulateGameObjectsDictionary(charactersList);
 		world.RegisterCharacterCreated (OnCharacterCreated);
 
-		// Debug
-		// FIXME remove this hard coded character name... remove it all actually.
-		world.CreateCharacter("Char1", world.GetTileAt(world.Width / 2, world.Height / 2));
-
 		foreach(Character c in world.characters) {
 			OnCharacterCreated(c);
 		}

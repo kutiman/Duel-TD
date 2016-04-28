@@ -1,11 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-
-
-using UnityEngine;
-using System.Collections.Generic;
-
 public class Path_TileGraph {
 
 	public Dictionary<Tile, Path_Node<Tile>> nodes;
