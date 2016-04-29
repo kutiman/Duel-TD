@@ -29,7 +29,7 @@ public class CharController : MonoBehaviour {
 		CharacterGameObjectMap.Add(c, char_go);
 
 		char_go.name = c.characterType;
-		char_go.transform.position = new Vector3(c.X, 0, c.Y);
+		char_go.transform.position = new Vector3(c.X, c.Z, c.Y);
 		char_go.transform.SetParent(this.transform, true);
 
 		c.RegisterCharacterMovedCallback(OnCharacterMoved);
@@ -43,7 +43,7 @@ public class CharController : MonoBehaviour {
 		}
 
 		GameObject char_go = CharacterGameObjectMap[c];
-		char_go.transform.position = new Vector3 (c.X, 0, c.Y);
+		char_go.transform.position = new Vector3 (c.X, c.Z, c.Y);
 	}
 }
 

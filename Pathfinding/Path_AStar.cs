@@ -71,7 +71,7 @@ public class Path_AStar {
 					continue;
 				}
 
-				float movement_cost_to_neighbor = neighbor.data.movementCost * dist_between (current, neighbor);
+				float movement_cost_to_neighbor = neighbor.data.movementCost * heuristc_cost_estimate (current, neighbor);
 
 				float tentative_g_score = g_score [current] + movement_cost_to_neighbor;
 
@@ -115,32 +115,7 @@ public class Path_AStar {
 	}
 
 	float heuristc_cost_estimate (Path_Node<Tile> a, Path_Node<Tile> b) {
-		return Mathf.Sqrt (
-			Mathf.Pow(a.data.X - b.data.X, 2) +
-			Mathf.Pow(a.data.Y - b.data.Y, 2)
-		);
-	}
-
-	float dist_between( Path_Node<Tile> a, Path_Node<Tile> b ) {
-		// We can make assumptions because we know we're working
-		// on a grid at this point.
-
-		// Hori/Vert neighbours have a distance of 1
-		if( Mathf.Abs( a.data.X - b.data.X ) + Mathf.Abs( a.data.Y - b.data.Y ) == 1 ) {
-			return 1f;
-		}
-
-		// Diag neighbours have a distance of 1.41421356237	
-		if( Mathf.Abs( a.data.X - b.data.X ) == 1 && Mathf.Abs( a.data.Y - b.data.Y ) == 1 ) {
-			return 1.41421356237f;
-		}
-
-		// Otherwise, do the actual math.
-		return Mathf.Sqrt(
-			Mathf.Pow(a.data.X - b.data.X, 2) +
-			Mathf.Pow(a.data.Y - b.data.Y, 2)
-		);
-
+		return Vector3.Distance(new Vector3 (a.data.X, a.data.Y, a.data.Z), new Vector3 (b.data.X, b.data.Y, b.data.Z));
 	}
 
 	public int Length () {

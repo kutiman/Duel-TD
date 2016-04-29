@@ -18,17 +18,20 @@ public class Character : IXmlSerializable {
 	float speed = 10f;
 
 	Action<Character> cbCharacterMoved;
-	
-	public float X {
-		get { 
-			return Mathf.Lerp(currTile.X, nextTile.X, movementPercentage);
-		}
-	}
 
-	public float Y {
+	// graphics loacation of the character
+	public float X { get { return Mathf.Lerp(currTile.X, nextTile.X, movementPercentage); } }
+	public float Y { get { return Mathf.Lerp(currTile.Y, nextTile.Y, movementPercentage); } }
+	//public float Z { get { return Mathf.Lerp(currTile.Z, nextTile.Z, movementPercentage); } }
+	public float Z { 
 		get { 
-			return Mathf.Lerp(currTile.Y, nextTile.Y, movementPercentage);
-		}
+			if (movementPercentage < 0.5f) {
+				return currTile.Z;
+			}
+			else {
+				return nextTile.Z;
+			} 
+		} 
 	}
 
 	public Character (Tile tile, string characterType) {
@@ -106,7 +109,9 @@ public class Character : IXmlSerializable {
 			}
 		}
 
-		float distToTravel = Mathf.Sqrt (Mathf.Pow (currTile.X - nextTile.X, 2) + Mathf.Pow (currTile.Y - nextTile.Y, 2));
+		float distToTravel = Vector3.Distance(new Vector3 (currTile.X, currTile.Y, currTile.Z), new Vector3 (nextTile.X, nextTile.Y, nextTile.Z));
+		// float distToTravel = Mathf.Sqrt (Mathf.Pow (currTile.X - nextTile.X, 2) + Mathf.Pow (currTile.Y - nextTile.Y, 2));
+
 
 		if (nextTile.movementCost == 0) {
 			Debug.LogError("character trying to traverse an unwalkble tile");
@@ -172,6 +177,7 @@ public class Character : IXmlSerializable {
 	public void WriteXml (XmlWriter writer) {
 		writer.WriteAttributeString("X", currTile.X.ToString());
 		writer.WriteAttributeString("Y", currTile.Y.ToString());
+		writer.WriteAttributeString("Z", currTile.Z.ToString());
 		writer.WriteAttributeString("CharacterType", characterType);
 	}
 

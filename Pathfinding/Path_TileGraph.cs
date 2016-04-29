@@ -16,15 +16,17 @@ public class Path_TileGraph {
 
 		for (int x = 0; x < world.Width; x++) {
 			for (int y = 0; y < world.Height; y++) {
+				for (int z = 0; z < world.Depth; z++) {
+					Tile t = world.GetTileAt (x, y, z);
 
-				Tile t = world.GetTileAt (x, y);
-
-				// tiles with a movement cost of 0 are unwalkable
-				//if (t.movementCost > 0) {
-				Path_Node<Tile> n = new Path_Node<Tile> ();
-				n.data = t;
-				nodes.Add (t, n);
-				//}
+					// tiles with a movement cost of 0 are unwalkable
+					//if (t.movementCost > 0) {
+					Path_Node<Tile> n = new Path_Node<Tile> ();
+					n.data = t;
+					nodes.Add (t, n);
+					//}
+				}
+					
 			}
 		}
 
@@ -42,15 +44,16 @@ public class Path_TileGraph {
 
 			List<Path_Edge<Tile>> edges = new List<Path_Edge<Tile>> ();
 
-			Tile[] neighbors = t.GetNeighbors (true);
+			Tile[] neighbors = t.GetNeighbors (false);
 
 			for (int i = 0; i < neighbors.Length; i++) {
 				if (neighbors [i] != null && neighbors [i].movementCost > 0) {
 					// this neighbor exists and is walkable so crate an edge for it
 
-					if (IsClippingCorner (t, neighbors [i])) {
-						continue;
-					}
+					// removed because going only in straight lines
+//					if (IsClippingCorner (t, neighbors [i])) {
+//						continue;
+//					}
 
 					Path_Edge<Tile> e = new Path_Edge<Tile>();
 					e.cost = neighbors[i].movementCost;
@@ -72,11 +75,12 @@ public class Path_TileGraph {
 
 		int dX = curr.X - neigh.X;
 		int dY = curr.Y - neigh.Y;
+		int dZ = curr.Z - neigh.Z;
 
 		if (Mathf.Abs (dX) + Mathf.Abs (dY) == 2) {
 
-			if (curr.world.GetTileAt(curr.X - dX, curr.Y).movementCost == 0) return true;
-			if (curr.world.GetTileAt(curr.X, curr.Y - dY).movementCost == 0) return true;
+			if (curr.world.GetTileAt(curr.X - dX, curr.Y, curr.Z).movementCost == 0) return true;
+			if (curr.world.GetTileAt(curr.X, curr.Y - dY, curr.Z).movementCost == 0) return true;
 		}
 
 		return false;

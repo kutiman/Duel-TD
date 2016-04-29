@@ -29,7 +29,7 @@ public class JobController : MonoBehaviour {
 		MeshRenderer mr = jobObject.transform.GetChild(0).GetComponent<MeshRenderer>();
 		Destroy(jobObject.transform.GetChild(0).GetComponent<MeshCollider>());
 
-		jobObject.transform.position = new Vector3(j.tile.X, 0, j.tile.Y);
+		jobObject.transform.position = new Vector3(j.tile.X, j.tile.Z, j.tile.Y);
 		jobObject.transform.SetParent(this.transform, true);
 
 		if (ghostMaterial != null) {

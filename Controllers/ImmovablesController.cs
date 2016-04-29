@@ -31,8 +31,8 @@ public class ImmovablesController : MonoBehaviour {
 
 		immovableGameObjectMap.Add(obj, obj_go);
 
-		obj_go.name = obj.objectType + "_"+ obj.tile.X + "_" + obj.tile.Y;
-		obj_go.transform.position = new Vector3(obj.tile.X, 0, obj.tile.Y);
+		obj_go.name = obj.objectType + "_"+ obj.tile.X + "_" + obj.tile.Y + "_" + obj.tile.Z;
+		obj_go.transform.position = new Vector3(obj.tile.X, obj.tile.Z, obj.tile.Y);
 		obj_go.transform.SetParent(this.transform, true);
 
 		// register a tile changing type callback

@@ -28,6 +28,7 @@ public class Immovable : IXmlSerializable {
 	// size of the object, if does not take only one tile
 	int width;
 	int height;
+	int depth;
 
 	Action <Immovable> cbOnChanged;
 
@@ -43,6 +44,7 @@ public class Immovable : IXmlSerializable {
 		this.movementCost = other.movementCost;
 		this.width = other.width;
 		this.height = other.height;
+		this.depth = other.depth;
 
 		this.imvbParameters = new Dictionary<string, float> (other.imvbParameters);
 
@@ -55,11 +57,12 @@ public class Immovable : IXmlSerializable {
 		return new Immovable(this);
 	}
 
-	public Immovable (string objectType, float movementCost = 1f, int width = 1, int height = 1	) {
+	public Immovable (string objectType, float movementCost = 1f, int width = 1, int height = 1, int depth = 1	) {
 		this.objectType = objectType;
 		this.movementCost = movementCost;
 		this.width = width;
 		this.height = height;
+		this.depth = depth;
 
 		imvbParameters = new Dictionary<string, float>();
 	}
@@ -99,6 +102,7 @@ public class Immovable : IXmlSerializable {
 	public void WriteXml (XmlWriter writer) {
 		writer.WriteAttributeString("X", tile.X.ToString());
 		writer.WriteAttributeString("Y", tile.Y.ToString());
+		writer.WriteAttributeString("Z", tile.Z.ToString());
 		writer.WriteAttributeString("ObjectType", objectType);
 
 		foreach (string k in imvbParameters.Keys) {
