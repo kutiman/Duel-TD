@@ -71,19 +71,19 @@ public class Path_TileGraph {
 		Debug.Log("Path_TileGraph: Created "+edgeCount+" edges.");
 	} 
 
-	bool IsClippingCorner (Tile curr, Tile neigh) {
-
-		int dX = curr.X - neigh.X;
-		int dY = curr.Y - neigh.Y;
-		int dZ = curr.Z - neigh.Z;
-
-		if (Mathf.Abs (dX) + Mathf.Abs (dY) == 2) {
-
-			if (curr.world.GetTileAt(curr.X - dX, curr.Y, curr.Z).movementCost == 0) return true;
-			if (curr.world.GetTileAt(curr.X, curr.Y - dY, curr.Z).movementCost == 0) return true;
-		}
-
-		return false;
-	}
+//	bool IsClippingCorner (Tile curr, Tile neigh) {
+//
+//		int dX = curr.X - neigh.X;
+//		int dY = curr.Y - neigh.Y;
+//		int dZ = curr.Z - neigh.Z;
+//
+//		if (Mathf.Abs (dX) + Mathf.Abs (dY) == 2) {
+//
+//			if (curr.world.GetTileAt(curr.X - dX, curr.Y, curr.Z).movementCost == 0) return true;
+//			if (curr.world.GetTileAt(curr.X, curr.Y - dY, curr.Z).movementCost == 0) return true;
+//		}
+//
+//		return false;
+//	}
 }
 

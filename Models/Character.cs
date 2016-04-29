@@ -90,7 +90,7 @@ public class Character : IXmlSerializable {
 				// generate a new path to our destination
 				pathAStar = new Path_AStar (WorldController.Instance.world, currTile, destTile);
 				if (pathAStar.Length () == 0) {
-					Debug.LogError ("pathAStar returned no path to destination");
+					//Debug.LogError ("pathAStar returned no path to destination");
 					// FIXME: the job should be re-enqued
 					AbandonJob ();
 					pathAStar = null;

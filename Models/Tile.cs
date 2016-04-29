@@ -41,7 +41,13 @@ public class Tile : IXmlSerializable {
 
 	public float movementCost {
 		get { 
-			if (immovable == null) {
+			if (world.GetTileAt (X, Y, Z - 1) != null) {
+				if (world.GetTileAt (X, Y, Z - 1).immovable != null && immovable == null) {
+					return 1;
+				}
+				else return 0;
+			}
+			else if (immovable == null) {
 				return 1;
 			}
 			else {
