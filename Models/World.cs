@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 public class World : IXmlSerializable {
 
-	Tile[,] tiles;
+	List<Tile[,]> tiles;
 	public List<Character> characters;
 	public List<Immovable> immovables;
 
@@ -16,6 +16,7 @@ public class World : IXmlSerializable {
 
 	public int Width {get; protected set;}
 	public int Height {get; protected set;}
+	public int Depth {get; protected set;}
 
 	Action<Immovable> cbImmovableCreated;
 	Action<Tile> cbTileChanged;
@@ -25,28 +26,35 @@ public class World : IXmlSerializable {
 
 	Dictionary<string, Immovable> immovablesPrototypes; 
 
-	public World (int width, int height) {
+	public World (int width, int height, int depth) {
 
-		SetupWorld(width, height);
+		SetupWorld(width, height, depth);
 
-		CreateCharacter("Char1", GetTileAt(Width / 2, Height / 2));
+		CreateCharacter("Char1", GetTileAt(Width / 2, Height / 2, 0));
 
 	}
 
-	void SetupWorld (int width, int height) {
+	void SetupWorld (int width, int height, int depth) {
 
 		jobQueue = new JobQueue();
 
 		Width = width;
 		Height = height;
+		Depth = depth;
 
-		tiles = new Tile[width, height];
+		tiles = new List<Tile[,]>();
+
+		for (int i = 0; i < depth; i++) {
+			tiles.Add ( new Tile[width, height] );
+		}
 
 		// creating the tiles
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				tiles[x, y] = new Tile(this, x, y);
-				tiles[x, y].RegisterTileChangedCallback ( OnTileChanged );
+				for (int z = 0; z < depth; z++) {
+					tiles[z][x, y] = new Tile(this, x, y, z);
+					tiles[z][x, y].RegisterTileChangedCallback ( OnTileChanged );
+				}
 			}
 		}
 
@@ -63,12 +71,12 @@ public class World : IXmlSerializable {
 		}
 	}
 
-	public Tile GetTileAt (int x, int y) {
-		if (x < 0 || x >= Width || y < 0 || y >= Height) {
+	public Tile GetTileAt (int x, int y, int z) {
+		if (x < 0 || x >= Width || y < 0 || y >= Height || z < 0 || z >= Depth) {
 			//Debug.LogError("Tile ("+x+","+y+") is out of range");
 			return null;
 		}
-		return tiles[x, y];
+		return tiles[z][x, y];
 	}
 
 	public Immovable PlaceImmovable (string objectType, Tile t) {
@@ -159,6 +167,7 @@ public class World : IXmlSerializable {
 		immovablesPrototypes.Add ("Cave", new Immovable ("Cave", 0, 1, 1));
 		immovablesPrototypes.Add ("Tree_Gum", new Immovable ("Tree_Gum", 0.5f, 1, 1));
 		immovablesPrototypes.Add ("Turret", new Immovable ("Turret", 0, 1, 1));
+		immovablesPrototypes.Add ("Grass", new Immovable ("Grass", 0, 1, 1));
 
 		immovablesPrototypes["Turret"].imvbParameters["shoot_speed"] = 0;
 		immovablesPrototypes["Turret"].updateActions += ImmovableActions.Turret_UpdateAction;
@@ -173,7 +182,7 @@ public class World : IXmlSerializable {
 		for (int x = 0; x < Width; x++) {
 			for (int y = 0; y < Height; y++) {
 				if ((x % 5 == 3 && y % 7 < 6) || (y % 5 == 2 && x % 5 < 4)) {
-					PlaceImmovable("Barrel", GetTileAt(x, y));
+					PlaceImmovable("Barrel", GetTileAt(x, y, 0));
 
 				}
 			}
@@ -198,15 +207,18 @@ public class World : IXmlSerializable {
 
 	public void WriteXml (XmlWriter writer) {
 		// save game info here
-		writer.WriteAttributeString ("Width", Width.ToString());
-		writer.WriteAttributeString ("Height", Height.ToString());
+		writer.WriteAttributeString ("Width", Width.ToString ());
+		writer.WriteAttributeString ("Height", Height.ToString ());
+		writer.WriteAttributeString ("Depth", Height.ToString ());
 
-		writer.WriteStartElement("Tiles");
+		writer.WriteStartElement ("Tiles");
 		for (int x = 0; x < Width; x++) {
 			for (int y = 0; y < Height; y++) {
-				writer.WriteStartElement("Tile");
-				tiles[x, y].WriteXml(writer);
-				writer.WriteEndElement();
+				for (int z = 0; z < Depth; z++) {
+					writer.WriteStartElement ("Tile");
+					tiles [z][x, y].WriteXml (writer);
+					writer.WriteEndElement ();
+				}
 			}
 		}
 		writer.WriteEndElement();
@@ -235,9 +247,10 @@ public class World : IXmlSerializable {
 		// load game info here
 		Width = int.Parse (reader.GetAttribute ("Width"));
 		Height = int.Parse (reader.GetAttribute ("Height"));
+		Depth = int.Parse (reader.GetAttribute ("Depth"));
 
 
-		SetupWorld (Width, Height);
+		SetupWorld (Width, Height, Depth);
 
 		while (reader.Read()) {
 			switch (reader.Name) {
@@ -262,7 +275,8 @@ public class World : IXmlSerializable {
 			do {
 				int x = int.Parse (reader.GetAttribute ("X"));
 				int y = int.Parse (reader.GetAttribute ("Y"));
-				tiles[x, y].ReadXml(reader);
+				int z = int.Parse (reader.GetAttribute ("Z"));
+				tiles[z][x, y].ReadXml(reader);
 			} while(reader.ReadToNextSibling("Tile"));
 
 
@@ -277,8 +291,9 @@ public class World : IXmlSerializable {
 			do {
 				int x = int.Parse (reader.GetAttribute ("X"));
 				int y = int.Parse (reader.GetAttribute ("Y"));
+				int z = int.Parse (reader.GetAttribute ("Z"));
 
-				Immovable imvb = PlaceImmovable(reader.GetAttribute("ObjectType"), tiles[x, y]);
+				Immovable imvb = PlaceImmovable(reader.GetAttribute("ObjectType"), tiles[z][x, y]);
 				imvb.ReadXml(reader);
 
 			} while(reader.ReadToNextSibling("Immovable"));
@@ -294,8 +309,9 @@ public class World : IXmlSerializable {
 			do {
 				int x = int.Parse (reader.GetAttribute ("X"));
 				int y = int.Parse (reader.GetAttribute ("Y"));
+				int z = int.Parse (reader.GetAttribute ("Z"));
 
-				Character c = CreateCharacter(reader.GetAttribute("CharacterType"), tiles[x, y]);
+				Character c = CreateCharacter(reader.GetAttribute("CharacterType"), tiles[z][x, y]);
 				c.ReadXml(reader);
 
 			} while(reader.ReadToNextSibling("Character"));
