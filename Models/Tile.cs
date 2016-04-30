@@ -182,6 +182,3 @@ public class Tile : IXmlSerializable {
 
 
 }
-
-
-

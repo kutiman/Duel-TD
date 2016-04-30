@@ -46,4 +46,3 @@ public class CharController : MonoBehaviour {
 		char_go.transform.position = new Vector3 (c.X, c.Z, c.Y);
 	}
 }
-

@@ -150,8 +150,3 @@ public class MouseController : MonoBehaviour {
 	}
 
 }
-
-
-
-
-
