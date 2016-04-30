@@ -32,17 +32,7 @@ public class Character : IXmlSerializable {
 			return Mathf.Lerp(currTile.Y, nextTile.Y, movementPercentage); 
 		} 
 	}
-	public float Z { 
-		get { 
-			if (nextTile == null) return currTile.Z;
-			if (movementPercentage < 0.5f) {
-				return currTile.Z;
-			}
-			else {
-				return nextTile.Z;
-			} 
-		} 
-	}
+
 
 	public Character (Tile tile, string characterType) {
 		currTile = destTile = nextTile = tile;
@@ -119,7 +109,7 @@ public class Character : IXmlSerializable {
 			}
 		}
 
-		float distToTravel = Vector3.Distance(new Vector3 (currTile.X, currTile.Y, currTile.Z), new Vector3 (nextTile.X, nextTile.Y, nextTile.Z));
+		float distToTravel = Vector2.Distance(new Vector2 (currTile.X, currTile.Y), new Vector2 (nextTile.X, nextTile.Y));
 		// float distToTravel = Mathf.Sqrt (Mathf.Pow (currTile.X - nextTile.X, 2) + Mathf.Pow (currTile.Y - nextTile.Y, 2));
 
 
@@ -188,7 +178,6 @@ public class Character : IXmlSerializable {
 	public void WriteXml (XmlWriter writer) {
 		writer.WriteAttributeString("X", currTile.X.ToString());
 		writer.WriteAttributeString("Y", currTile.Y.ToString());
-		writer.WriteAttributeString("Z", currTile.Z.ToString());
 		writer.WriteAttributeString("CharacterType", characterType);
 	}
 

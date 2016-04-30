@@ -13,18 +13,14 @@ public class MouseController : MonoBehaviour {
 
 	bool isDragging = false;
 
-	Plane[] planes;
+	Plane plane = new Plane(new Vector3(0,0,1), new Vector3(1,0,0), new Vector3(-1,0,0));
 
 	public GameObject cursorMarker;
 	List<GameObject> dragMarkersGameObjects;
 
 	// Use this for initialization
 	void Start () {
-		planes = new Plane[WorldController.Instance.world.Depth];
-		// creating the planes for mouse interaction with a world layer
-		for (int i = 0; i < planes.Length; i++) {
-			planes[i] = new Plane( new Vector3(0,i,1), new Vector3(1,i,0), new Vector3(-1,i,0) );
-		}
+		
 		dragMarkersGameObjects = new List<GameObject>();
 	}
 
@@ -37,12 +33,6 @@ public class MouseController : MonoBehaviour {
 
 		lastFramePosition = GetCurrentMousePosition();
 
-		// changing te mouse_z - meaning  what layer the mouse cursor will intersect
-		//(world z axis, but really y axis... this is dumb)
-		if (Input.GetKeyDown(KeyCode.A)) mouse_z++;
-		if (Input.GetKeyDown(KeyCode.Z)) mouse_z--;
-		mouse_z = Mathf.Clamp(mouse_z, 0, WorldController.Instance.world.Depth - 1);
-
 	}
 
 	// send a ray to intersect the plane and get back the position of intersection
@@ -50,7 +40,7 @@ public class MouseController : MonoBehaviour {
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		Debug.DrawRay(ray.origin, ray.direction * 100, Color.yellow);
 		float rayDistance;
-		planes[mouse_z].Raycast(ray, out rayDistance);
+		plane.Raycast(ray, out rayDistance);
 		Vector3 pos = ray.GetPoint(rayDistance);
 		return pos;
 	}
@@ -94,9 +84,9 @@ public class MouseController : MonoBehaviour {
 
 			for (int x = start_x; x <= end_x; x++) {
 				for (int y = start_y; y <= end_y; y++) {
-					Tile t = WorldController.Instance.world.GetTileAt (x, y, mouse_z);
+					Tile t = WorldController.Instance.world.GetTileAt (x, y);
 					if (t != null) {
-						GameObject go = SimplePool.Spawn (cursorMarker, new Vector3 (x, mouse_z + 0.01f, y), Quaternion.identity);
+						GameObject go = SimplePool.Spawn (cursorMarker, new Vector3 (x, 0.01f, y), Quaternion.identity);
 						go.transform.SetParent (this.transform, true);
 						dragMarkersGameObjects.Add (go);
 					}
@@ -112,7 +102,7 @@ public class MouseController : MonoBehaviour {
 			
 			for (int x = start_x; x <= end_x; x++) {
 				for (int y = start_y; y <= end_y; y++) {
-					Tile t = WorldController.Instance.world.GetTileAt (x, y, mouse_z);
+					Tile t = WorldController.Instance.world.GetTileAt (x, y);
 					if (t != null) {
 						// call the build controller
 						bc.BuildStuff(t);

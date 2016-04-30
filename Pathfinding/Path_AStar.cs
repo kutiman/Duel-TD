@@ -115,7 +115,7 @@ public class Path_AStar {
 	}
 
 	float heuristc_cost_estimate (Path_Node<Tile> a, Path_Node<Tile> b) {
-		return Vector3.Distance(new Vector3 (a.data.X, a.data.Y, a.data.Z), new Vector3 (b.data.X, b.data.Y, b.data.Z));
+		return Vector2.Distance(new Vector2 (a.data.X, a.data.Y), new Vector2 (b.data.X, b.data.Y));
 	}
 
 	public int Length () {

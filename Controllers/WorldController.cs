@@ -38,7 +38,7 @@ public class WorldController : MonoBehaviour {
 	}
 
 	void CreateEmptyWorld () {
-		world = new World (30, 30, 10);
+		world = new World (30, 30);
 		Debug.Log("Created a new world!");
 		// setting the camera to the middle of the world
 		Camera.main.transform.position = new Vector3 (world.Width/2, Camera.main.transform.position.y, world.Height/2 + Camera.main.transform.position.z);
@@ -51,9 +51,8 @@ public class WorldController : MonoBehaviour {
 	public Tile GetTileAtWorldCoord (Vector3 coord) {
 		int x = Mathf.FloorToInt(coord.x);
 		int y = Mathf.FloorToInt(coord.z);
-		int z = Mathf.FloorToInt(coord.y);
 
-		return world.GetTileAt(x, y, z);
+		return world.GetTileAt(x, y);
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
