@@ -7,7 +7,7 @@ public class Path_TileGraph {
 
 	public Path_TileGraph (World world) {
 
-		Debug.Log ("Path_TileGraph");
+//		Debug.Log ("Path_TileGraph");
 		// looping thourh all the tiles in the world.
 		// for each tile, create a node
 		// do not create a node for a blocked tile
@@ -30,7 +30,7 @@ public class Path_TileGraph {
 			}
 		}
 
-		Debug.Log ("Path_TileGraph: Created " + nodes.Count + " nodes.");
+//		Debug.Log ("Path_TileGraph: Created " + nodes.Count + " nodes.");
 
 		// now loop through all nodes again
 		// and create edges for neighbors
@@ -68,7 +68,7 @@ public class Path_TileGraph {
 
 		}
 
-		Debug.Log("Path_TileGraph: Created "+edgeCount+" edges.");
+//		Debug.Log("Path_TileGraph: Created "+edgeCount+" edges.");
 	} 
 
 //	bool IsClippingCorner (Tile curr, Tile neigh) {

@@ -19,12 +19,22 @@ public class Character : IXmlSerializable {
 
 	Action<Character> cbCharacterMoved;
 
-	// graphics loacation of the character
-	public float X { get { return Mathf.Lerp(currTile.X, nextTile.X, movementPercentage); } }
-	public float Y { get { return Mathf.Lerp(currTile.Y, nextTile.Y, movementPercentage); } }
-	//public float Z { get { return Mathf.Lerp(currTile.Z, nextTile.Z, movementPercentage); } }
+	// graphics location of the character
+	public float X { 
+		get { 
+			if (nextTile == null) return currTile.X;
+			return Mathf.Lerp(currTile.X, nextTile.X, movementPercentage); 
+		}
+	}
+	public float Y { 
+		get { 
+			if (nextTile == null) return currTile.Y;
+			return Mathf.Lerp(currTile.Y, nextTile.Y, movementPercentage); 
+		} 
+	}
 	public float Z { 
 		get { 
+			if (nextTile == null) return currTile.Z;
 			if (movementPercentage < 0.5f) {
 				return currTile.Z;
 			}
@@ -96,7 +106,7 @@ public class Character : IXmlSerializable {
 					pathAStar = null;
 					return;
 				}
-				pathAStar.Dequeue ();
+				nextTile = pathAStar.Dequeue ();
 			}
 			// FIXME: discarding the first node, the current tile of the character
 			// from the pathfinding system. Maybe there's a better way?
@@ -114,7 +124,8 @@ public class Character : IXmlSerializable {
 
 
 		if (nextTile.movementCost == 0) {
-			Debug.LogError("character trying to traverse an unwalkble tile");
+		//FIXME : this is getting called too much. shouldnt be at all?
+//			Debug.LogError("character trying to traverse an unwalkble tile");
 			nextTile = null;
 			pathAStar = null;
 			return;

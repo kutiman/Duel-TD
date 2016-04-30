@@ -30,7 +30,10 @@ public class World : IXmlSerializable {
 
 		SetupWorld(width, height, depth);
 
-		CreateCharacter("Char1", GetTileAt(Width / 2, Height / 2, 0));
+		int n = 20;
+		for (int i = 0; i < n; i++) {
+			CreateCharacter("Char1", GetTileAt(i % n, Height / 2 + i % (n/5), 0));
+		}
 
 	}
 
@@ -168,6 +171,7 @@ public class World : IXmlSerializable {
 		immovablesPrototypes.Add ("Tree_Gum", new Immovable ("Tree_Gum", 0.5f, 1, 1));
 		immovablesPrototypes.Add ("Turret", new Immovable ("Turret", 0, 1, 1));
 		immovablesPrototypes.Add ("Grass", new Immovable ("Grass", 0, 1, 1));
+		immovablesPrototypes.Add ("Snow", new Immovable ("Snow", 0, 1, 1));
 
 		immovablesPrototypes["Turret"].imvbParameters["shoot_speed"] = 0;
 		immovablesPrototypes["Turret"].updateActions += ImmovableActions.Turret_UpdateAction;
@@ -182,7 +186,8 @@ public class World : IXmlSerializable {
 		for (int x = 0; x < Width; x++) {
 			for (int y = 0; y < Height; y++) {
 				if ((x % 5 == 3 && y % 7 < 6) || (y % 5 == 2 && x % 5 < 4)) {
-					PlaceImmovable("Barrel", GetTileAt(x, y, 0));
+					PlaceImmovable("Grass", GetTileAt(x, y, 0));
+					PlaceImmovable("Grass", GetTileAt(x, y, 1));
 
 				}
 			}
