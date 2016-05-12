@@ -5,56 +5,65 @@ using UnityEngine.EventSystems;
 
 public class BuildController : MonoBehaviour {
 
-	Tile.TileType tileBuildMode = Tile.TileType.Ground;
-	string buildmodeObjectType;
-	bool buildModeIsObjects = false;
+	enum BuildMode {tile, immovable, zombie};
+	BuildMode buildMode = BuildMode.tile;
+
+	Tile.TileType tileType = Tile.TileType.Ground;
+	string immovableType;
+	string zombieType;
+
 
 	// Use this for initialization
 
 	public void BuildStuff (Tile t) {
-		if (buildModeIsObjects == true) {
-			// create an immovable in the tile
-			string immovableType = buildmodeObjectType;
+		switch (buildMode) {
 
-			if (WorldController.Instance.world.IsImmovablePositionValid (t)) {
+			case BuildMode.tile:
+				t.Type = tileType;
+				break;
 
-				Job job = new Job (t, immovableType, (theJob) => {
-					WorldController.Instance.world.PlaceImmovable (immovableType, theJob.tile); 
-					t.jobPending = null;
-				} 
-				);
+			case BuildMode.immovable:
+				if (WorldController.Instance.world.IsImmovablePositionValid (t)) {
+					WorldController.Instance.world.PlaceImmovable(immovableType, t);
+				}
+				break;
 
-				t.jobPending = job;
-				job.RegisterJobCancelCallback( (theJob) => { theJob.tile.jobPending = null; } );
+			case BuildMode.zombie:
+				if (WorldController.Instance.world.IsImmovablePositionValid (t)) {
+					WorldController.Instance.world.CreateZombie(zombieType, t);
+				}
+				break;
 
-				WorldController.Instance.world.jobQueue.Enqueue (job);
-
-			}
+			default:
+				break;
 		}
-		else {
-			// change the tile
-			t.Type = tileBuildMode;
-		}
+
+
 	}
 
 	public void SetMode_BuildGround () {
-		buildModeIsObjects = false;
-		tileBuildMode = Tile.TileType.Ground;
+		buildMode = BuildMode.tile;
+		tileType = Tile.TileType.Ground;
 	}
 
 	public void SetMode_BuildImmovable ( string objectType) {
-		buildModeIsObjects = true;
-		buildmodeObjectType = objectType;
+		buildMode = BuildMode.immovable;
+		immovableType = objectType;
+	}
+
+	public void SetMode_BuildZombie ( string objectType) {
+		buildMode = BuildMode.zombie;
+		zombieType = objectType;
 	}
 
 	public void SetMode_Bulldoze () {
-		buildModeIsObjects = false;
-		tileBuildMode = Tile.TileType.Empty;
+		buildMode = BuildMode.tile;
+		tileType = Tile.TileType.Empty;
 	}
 
-	void OnImmovableJobComplete (string immovableType, Tile t) {
-		WorldController.Instance.world.PlaceImmovable(immovableType, t);
-	}
+//	void OnImmovableJobComplete (string immovableType, Tile t) {
+//		WorldController.Instance.world.PlaceImmovable(immovableType, t);
+//	}
 
 	//----------------
 	// *** Testing ***

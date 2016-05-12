@@ -8,7 +8,8 @@ using System.Xml.Serialization;
 public class World : IXmlSerializable {
 
 	Tile[,] tiles;
-	public List<Character> characters;
+	//public List<Character> characters;
+	public List<Zombie> zombies;
 	public List<Immovable> immovables;
 
 	// path used to navigate the world
@@ -19,9 +20,10 @@ public class World : IXmlSerializable {
 
 	Action<Immovable> cbImmovableCreated;
 	Action<Tile> cbTileChanged;
-	Action<Character> cbCharacterCreated;
+	//Action<Character> cbCharacterCreated;
+	Action<Zombie> cbZombieCreated;
 
-	public JobQueue jobQueue;
+	//public JobQueue jobQueue;
 
 	Dictionary<string, Immovable> immovablesPrototypes; 
 
@@ -29,16 +31,16 @@ public class World : IXmlSerializable {
 
 		SetupWorld(width, height);
 
-		int n = 20;
-		for (int i = 0; i < n; i++) {
-			CreateCharacter("Char1", GetTileAt(i % n, Height / 2 + i % (n/5)));
-		}
+//		int n = 20;
+//		for (int i = 0; i < n; i++) {
+//			CreateCharacter("Char1", GetTileAt(i % n, Height / 2 + i % (n/5)));
+//		}
 
 	}
 
 	void SetupWorld (int width, int height) {
 
-		jobQueue = new JobQueue();
+		//jobQueue = new JobQueue();
 
 		Width = width;
 		Height = height;
@@ -56,13 +58,20 @@ public class World : IXmlSerializable {
 
 		CreateImmovablePrototypes();
 
-		characters = new List<Character>();
+		//characters = new List<Character>();
 		immovables = new List<Immovable>();
+		zombies = new List<Zombie>();
 
 	}
 
+//	public void Update (float deltaTime) {
+//		foreach (Character c in characters) {
+//			c.Update (deltaTime);
+//		}
+//	}
+
 	public void Update (float deltaTime) {
-		foreach (Character c in characters) {
+		foreach (Zombie c in zombies) {
 			c.Update (deltaTime);
 		}
 	}
@@ -99,15 +108,26 @@ public class World : IXmlSerializable {
 		
 	}
 
-	public Character CreateCharacter (string characterType, Tile t) {
-		
-		Character c = new Character (t, characterType);
-		characters.Add (c);
-		if (cbCharacterCreated != null) {
-			cbCharacterCreated(c);
+//	public Character CreateCharacter (string characterType, Tile t) {
+//		
+//		Character c = new Character (t, characterType);
+//		characters.Add (c);
+//		if (cbCharacterCreated != null) {
+//			cbCharacterCreated(c);
+//		}
+//
+//		return c;
+//	}
+
+	public Zombie CreateZombie (string zombieType, Tile t) {
+		PlayerController enemy = GameObject.FindObjectOfType<PlayerController>();
+		Zombie zom = new Zombie (t, zombieType, enemy);
+		zombies.Add (zom);
+		if (cbZombieCreated != null) {
+			cbZombieCreated(zom);
 		}
 
-		return c;
+		return zom;
 	}
 
 	public void RegisterImmovableCreated (Action<Immovable> cb) {
@@ -118,12 +138,20 @@ public class World : IXmlSerializable {
 		cbImmovableCreated -= cb;
 	}
 
-	public void RegisterCharacterCreated (Action<Character> cb) {
-		cbCharacterCreated += cb;
+//	public void RegisterCharacterCreated (Action<Character> cb) {
+//		cbCharacterCreated += cb;
+//	}
+//
+//	public void UnregisterCharacterCreated (Action<Character> cb) {
+//		cbCharacterCreated -= cb;
+//	}
+
+	public void RegisterZombieCreated (Action<Zombie> cb) {
+		cbZombieCreated += cb;
 	}
 
-	public void UnregisterCharacterCreated (Action<Character> cb) {
-		cbCharacterCreated -= cb;
+	public void UnregisterZombieCreated (Action<Zombie> cb) {
+		cbZombieCreated -= cb;
 	}
 
 	public void RegisterTileChanged (Action<Tile> cb) {
@@ -147,7 +175,7 @@ public class World : IXmlSerializable {
 	}
 
 	public bool IsImmovablePositionValid (Tile t) {
-		if (t.jobPending != null || t.immovable != null) {
+		if (/*t.jobPending != null || */ t.immovable != null) {
 			return false;
 		}
 
@@ -165,6 +193,7 @@ public class World : IXmlSerializable {
 		immovablesPrototypes.Add ("Turret", new Immovable ("Turret", 0, 1, 1));
 		immovablesPrototypes.Add ("Grass", new Immovable ("Grass", 0, 1, 1));
 		immovablesPrototypes.Add ("Snow", new Immovable ("Snow", 0, 1, 1));
+		immovablesPrototypes.Add ("Homebase", new Immovable ("Homebase", 0, 1, 1));
 
 		immovablesPrototypes["Turret"].imvbParameters["shoot_speed"] = 0;
 		immovablesPrototypes["Turret"].updateActions += ImmovableActions.Turret_UpdateAction;
@@ -225,15 +254,15 @@ public class World : IXmlSerializable {
 			
 		}
 		writer.WriteEndElement();
-
-		writer.WriteStartElement("Characters");
-		foreach (Character c in characters) {
-			writer.WriteStartElement("Character");
-			c.WriteXml(writer);
-			writer.WriteEndElement();
-			
-		}
-		writer.WriteEndElement();
+//
+//		writer.WriteStartElement("Characters");
+//		foreach (Character c in characters) {
+//			writer.WriteStartElement("Character");
+//			c.WriteXml(writer);
+//			writer.WriteEndElement();
+//			
+//		}
+//		writer.WriteEndElement();
 	}
 
 	public void ReadXml (XmlReader reader) {
@@ -253,9 +282,9 @@ public class World : IXmlSerializable {
 				case "Immovables":
 					ReadXml_Immovables(reader);
 					break;
-				case "Characters":
-					ReadXml_Characters(reader);
-					break;
+//				case "Characters":
+//					ReadXml_Characters(reader);
+//					break;
 			}
 		}
 	}
@@ -292,21 +321,21 @@ public class World : IXmlSerializable {
 
 	}
 
-	void ReadXml_Characters (XmlReader reader) {
-		Debug.Log("ReadXml_Characters");
-
-		if (reader.ReadToDescendant("Character")) {
-
-			do {
-				int x = int.Parse (reader.GetAttribute ("X"));
-				int y = int.Parse (reader.GetAttribute ("Y"));
-
-				Character c = CreateCharacter(reader.GetAttribute("CharacterType"), tiles[x, y]);
-				c.ReadXml(reader);
-
-			} while(reader.ReadToNextSibling("Character"));
-		}
-
-	}
+//	void ReadXml_Characters (XmlReader reader) {
+//		Debug.Log("ReadXml_Characters");
+//
+//		if (reader.ReadToDescendant("Character")) {
+//
+//			do {
+//				int x = int.Parse (reader.GetAttribute ("X"));
+//				int y = int.Parse (reader.GetAttribute ("Y"));
+//
+//				Character c = CreateCharacter(reader.GetAttribute("CharacterType"), tiles[x, y]);
+//				c.ReadXml(reader);
+//
+//			} while(reader.ReadToNextSibling("Character"));
+//		}
+//
+//	}
 
 }

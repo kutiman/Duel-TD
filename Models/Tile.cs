@@ -64,6 +64,7 @@ public class Tile : IXmlSerializable {
 	}
 
 	public bool PlaceObject (Immovable objInstance) {
+		
 		if (objInstance == null) {
 			// we are uninstalling the object that currently occupies the tile
 			immovable = null;

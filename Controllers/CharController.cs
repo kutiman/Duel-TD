@@ -8,19 +8,22 @@ public class CharController : MonoBehaviour {
 	Dictionary <Character, GameObject> CharacterGameObjectMap;
 	public Dictionary <string, GameObject> CharactersMap { get; protected set; }
 
-	// this list is populated in the inspector. Takes all the items for installing in the game;
+	/// <summary>
+	/// this list is to be populated in the inspector.
+	/// creates a corresponding map item in CharacterGameObjectMap
+	/// </summary>
 	public GameObject[] charactersList;
 
 
-	void Start () {
-		CharacterGameObjectMap = new Dictionary<Character, GameObject>();
-		CharactersMap = Utilities.PopulateGameObjectsDictionary(charactersList);
-		world.RegisterCharacterCreated (OnCharacterCreated);
-
-		foreach(Character c in world.characters) {
-			OnCharacterCreated(c);
-		}
-	} 
+//	void Start () {
+//		CharacterGameObjectMap = new Dictionary<Character, GameObject>();
+//		CharactersMap = Utilities.PopulateGameObjectsDictionary(charactersList);
+//		world.RegisterCharacterCreated (OnCharacterCreated);
+//
+//		foreach(Character c in world.characters) {
+//			OnCharacterCreated(c);
+//		}
+//	} 
 
 	public void OnCharacterCreated (Character c) {
 

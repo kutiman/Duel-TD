@@ -1,23 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 
-public class Character : IXmlSerializable {
+public class Zombie {
 
-	public string characterType {get; protected set;}
+	public string zombieType {get; protected set;}
 	
 	public Tile currTile {get; protected set;}
 	Tile destTile;
 	Tile nextTile;
 	Path_AStar pathAStar;
 
-	float movementPercentage;
-	float speed = 10f;
+	PlayerController enemy;
 
-	Action<Character> cbCharacterMoved;
+	float movementPercentage;
+	float speed = 2f;
+
+	Action<Zombie> cbZombieMoved;
+	Action<Zombie> cbZombieReachedEnd;
+
 
 	// graphics location of the character
 	public float X { 
@@ -34,53 +35,20 @@ public class Character : IXmlSerializable {
 	}
 
 
-	public Character (Tile tile, string characterType) {
-		currTile = destTile = nextTile = tile;
-		this.characterType = characterType;
+	public Zombie (Tile tile, string zombieType, PlayerController enemy) {
+		currTile = nextTile = tile;
+		destTile = enemy.homebase.tile;
+		this.zombieType = zombieType;
+		this.enemy = enemy;
 	}
-
-	public void SetDestination (Tile tile) {
-		if (currTile.IsNeighbor (tile, true) == false) { 
-			Debug.Log("The destination tile is not my neighbor");
-		}
-
-		destTile = tile;
-	}
-
-//	Job myJob;
-//
-//	void Update_DoJob (float deltaTime) {
-//		if (myJob == null) {
-//			myJob = currTile.world.jobQueue.Dequeue ();
-//
-//			if (myJob != null) {
-//				// I got a job!
-//				destTile = myJob.tile;
-//
-//				// Register the ended job callback
-//				myJob.RegisterJobCompleteCallback (OnJobEnded);
-//				myJob.RegisterJobCancelCallback (OnJobEnded);
-//			}
-//		}
-//
-//		// moving the character
-//		if (myJob != null && currTile == myJob.tile) {
-//			myJob.DoJob(deltaTime);
-//		}
-//
-//	}
-//
-//	public void AbandonJob() {
-//		nextTile = destTile = currTile;
-//		pathAStar = null;
-//		currTile.world.jobQueue.Enqueue(myJob);
-//		myJob = null;
-//	}
 
 	void Update_DoMovement (float deltaTime) {
 
 		if (currTile == destTile) {
 			pathAStar = null;
+			if (cbZombieReachedEnd != null) {
+				cbZombieReachedEnd (this);
+			}
 			return; // where are already where we want to be
 		}
 
@@ -92,7 +60,6 @@ public class Character : IXmlSerializable {
 				if (pathAStar.Length () == 0) {
 					//Debug.LogError ("pathAStar returned no path to destination");
 					// FIXME: the job should be re-enqued
-//					AbandonJob ();
 					pathAStar = null;
 					return;
 				}
@@ -135,53 +102,28 @@ public class Character : IXmlSerializable {
 
 	public void Update (float deltaTime) {
 
-//		Update_DoJob(deltaTime);
 		Update_DoMovement(deltaTime);
 
-		if (cbCharacterMoved != null) {
-			cbCharacterMoved(this);
+		if (cbZombieMoved != null) {
+			cbZombieMoved(this);
 		}
 
 	}
 
-	public void RegisterCharacterMovedCallback (Action<Character> cb) {
-		cbCharacterMoved += cb;
+	public void RegisterZombieMovedCallback (Action<Zombie> cb) {
+		cbZombieMoved += cb;
 	}
 
-	public void UnregisterCharacterMovedCallback (Action<Character> cb) {
-		cbCharacterMoved -= cb;
+	public void UnregisterZombieMovedCallback (Action<Zombie> cb) {
+		cbZombieMoved -= cb;
 	}
 
-//	void OnJobEnded (Job j) {
-//		if (j != myJob) {
-//			Debug.LogError("character trying to end a job that is not his.");
-//			return;
-//		}
-//
-//		myJob = null;
-//	}
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	///
-	///												SAVE & LOAD
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	public Character () {
-		
+	public void RegisterZombieReachedEndCallback (Action<Zombie> cb) {
+		cbZombieReachedEnd += cb;
 	}
 
-	public XmlSchema GetSchema () {
-		return null;
+	public void UnregisterZombieReachedEndCallback (Action<Zombie> cb) {
+		cbZombieReachedEnd -= cb;
 	}
 
-	public void WriteXml (XmlWriter writer) {
-		writer.WriteAttributeString("X", currTile.X.ToString());
-		writer.WriteAttributeString("Y", currTile.Y.ToString());
-		writer.WriteAttributeString("CharacterType", characterType);
-	}
-
-	public void ReadXml (XmlReader reader) {
-
-	}
 }

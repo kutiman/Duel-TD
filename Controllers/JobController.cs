@@ -14,7 +14,7 @@ public class JobController : MonoBehaviour {
 		ic = GameObject.FindObjectOfType<ImmovablesController>();
 		jobQueueObjectsMap = new Dictionary<Job, GameObject>();
 
-		WorldController.Instance.world.jobQueue.RegisterJobCreatedCallback(OnJobCreated);
+//		WorldController.Instance.world.jobQueue.RegisterJobCreatedCallback(OnJobCreated);
 	}
 	
 	void OnJobCreated (Job j) {
