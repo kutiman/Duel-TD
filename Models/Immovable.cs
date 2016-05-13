@@ -70,7 +70,7 @@ public class Immovable : IXmlSerializable {
 
 		obj.tile = tile;
 
-		// placing the objcet in the tile
+		// placing the object in the tile
 		if (tile.PlaceObject (obj) == false) {
 			return null;
 		}

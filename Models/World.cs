@@ -8,7 +8,6 @@ using System.Xml.Serialization;
 public class World : IXmlSerializable {
 
 	Tile[,] tiles;
-	//public List<Character> characters;
 	public List<Zombie> zombies;
 	public List<Immovable> immovables;
 
@@ -20,27 +19,16 @@ public class World : IXmlSerializable {
 
 	Action<Immovable> cbImmovableCreated;
 	Action<Tile> cbTileChanged;
-	//Action<Character> cbCharacterCreated;
 	Action<Zombie> cbZombieCreated;
 
-	//public JobQueue jobQueue;
-
 	Dictionary<string, Immovable> immovablesPrototypes; 
+	Dictionary<string, Zombie> zombiePrototypes;
 
 	public World (int width, int height) {
-
 		SetupWorld(width, height);
-
-//		int n = 20;
-//		for (int i = 0; i < n; i++) {
-//			CreateCharacter("Char1", GetTileAt(i % n, Height / 2 + i % (n/5)));
-//		}
-
 	}
 
 	void SetupWorld (int width, int height) {
-
-		//jobQueue = new JobQueue();
 
 		Width = width;
 		Height = height;
@@ -57,18 +45,12 @@ public class World : IXmlSerializable {
 		}
 
 		CreateImmovablePrototypes();
+		CreateZombiePrototypes();
 
-		//characters = new List<Character>();
 		immovables = new List<Immovable>();
 		zombies = new List<Zombie>();
 
 	}
-
-//	public void Update (float deltaTime) {
-//		foreach (Character c in characters) {
-//			c.Update (deltaTime);
-//		}
-//	}
 
 	public void Update (float deltaTime) {
 		foreach (Zombie c in zombies) {
@@ -102,26 +84,33 @@ public class World : IXmlSerializable {
 		if (cbImmovableCreated != null) {
 			cbImmovableCreated (imvb);
 			InvalidateTileGraph();
+
+			// removing the path of all zombies, making them recalculate the path.
+			foreach (Zombie zom in zombies) {
+				zom.pathAStar = null;
+			}
 		}
 
 		return imvb;
 		
 	}
 
-//	public Character CreateCharacter (string characterType, Tile t) {
-//		
-//		Character c = new Character (t, characterType);
-//		characters.Add (c);
-//		if (cbCharacterCreated != null) {
-//			cbCharacterCreated(c);
-//		}
-//
-//		return c;
-//	}
-
 	public Zombie CreateZombie (string zombieType, Tile t) {
+
+		Debug.Log("Created a zombie");
+
+		if (zombiePrototypes.ContainsKey (zombieType) == false) {
+			Debug.LogError ("zombiePrototypes doesnt contain an prototype for key " + zombieType);
+			return null;
+		}
 		PlayerController enemy = GameObject.FindObjectOfType<PlayerController>();
-		Zombie zom = new Zombie (t, zombieType, enemy);
+
+		Zombie zom = Zombie.PlaceInstance (zombiePrototypes [zombieType], t, enemy);
+
+		if (zom == null) {
+			return null;
+		}
+
 		zombies.Add (zom);
 		if (cbZombieCreated != null) {
 			cbZombieCreated(zom);
@@ -137,14 +126,6 @@ public class World : IXmlSerializable {
 	public void UnregisterImmovableCreated (Action<Immovable> cb) {
 		cbImmovableCreated -= cb;
 	}
-
-//	public void RegisterCharacterCreated (Action<Character> cb) {
-//		cbCharacterCreated += cb;
-//	}
-//
-//	public void UnregisterCharacterCreated (Action<Character> cb) {
-//		cbCharacterCreated -= cb;
-//	}
 
 	public void RegisterZombieCreated (Action<Zombie> cb) {
 		cbZombieCreated += cb;
@@ -175,7 +156,7 @@ public class World : IXmlSerializable {
 	}
 
 	public bool IsImmovablePositionValid (Tile t) {
-		if (/*t.jobPending != null || */ t.immovable != null) {
+		if (t.immovable != null) {
 			return false;
 		}
 
@@ -184,6 +165,7 @@ public class World : IXmlSerializable {
 
 	void CreateImmovablePrototypes () {
 
+		// FIXME: read from a different file. Maybe xml?
 		immovablesPrototypes = new Dictionary<string, Immovable>();
 
 		immovablesPrototypes.Add ("Barrel", new Immovable ("Barrel", 0, 1, 1));
@@ -193,10 +175,19 @@ public class World : IXmlSerializable {
 		immovablesPrototypes.Add ("Turret", new Immovable ("Turret", 0, 1, 1));
 		immovablesPrototypes.Add ("Grass", new Immovable ("Grass", 0, 1, 1));
 		immovablesPrototypes.Add ("Snow", new Immovable ("Snow", 0, 1, 1));
-		immovablesPrototypes.Add ("Homebase", new Immovable ("Homebase", 0, 1, 1));
+		immovablesPrototypes.Add ("Homebase", new Immovable ("Homebase", 1, 1, 1));
 
 		immovablesPrototypes["Turret"].imvbParameters["shoot_speed"] = 0;
 		immovablesPrototypes["Turret"].updateActions += ImmovableActions.Turret_UpdateAction;
+
+	}
+
+	void CreateZombiePrototypes () {
+
+		// FIXME: read from a different file. Maybe xml?
+		zombiePrototypes = new Dictionary<string, Zombie>();
+
+		zombiePrototypes.Add ("Zombie_1", new Zombie ("Zombie_1", 10, 1, 1, 1f));
 
 	}
 
@@ -254,15 +245,6 @@ public class World : IXmlSerializable {
 			
 		}
 		writer.WriteEndElement();
-//
-//		writer.WriteStartElement("Characters");
-//		foreach (Character c in characters) {
-//			writer.WriteStartElement("Character");
-//			c.WriteXml(writer);
-//			writer.WriteEndElement();
-//			
-//		}
-//		writer.WriteEndElement();
 	}
 
 	public void ReadXml (XmlReader reader) {
@@ -282,9 +264,7 @@ public class World : IXmlSerializable {
 				case "Immovables":
 					ReadXml_Immovables(reader);
 					break;
-//				case "Characters":
-//					ReadXml_Characters(reader);
-//					break;
+
 			}
 		}
 	}
@@ -318,24 +298,5 @@ public class World : IXmlSerializable {
 
 			} while(reader.ReadToNextSibling("Immovable"));
 		}
-
 	}
-
-//	void ReadXml_Characters (XmlReader reader) {
-//		Debug.Log("ReadXml_Characters");
-//
-//		if (reader.ReadToDescendant("Character")) {
-//
-//			do {
-//				int x = int.Parse (reader.GetAttribute ("X"));
-//				int y = int.Parse (reader.GetAttribute ("Y"));
-//
-//				Character c = CreateCharacter(reader.GetAttribute("CharacterType"), tiles[x, y]);
-//				c.ReadXml(reader);
-//
-//			} while(reader.ReadToNextSibling("Character"));
-//		}
-//
-//	}
-
 }

@@ -115,7 +115,7 @@ public class Character : IXmlSerializable {
 
 		if (nextTile.movementCost == 0) {
 		//FIXME : this is getting called too much. shouldnt be at all?
-//			Debug.LogError("character trying to traverse an unwalkble tile");
+			Debug.LogError("character trying to traverse an unwalkble tile");
 			nextTile = null;
 			pathAStar = null;
 			return;

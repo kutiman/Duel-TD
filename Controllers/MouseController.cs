@@ -9,8 +9,6 @@ public class MouseController : MonoBehaviour {
 	Vector3 currFramePosition;
 	Vector3 dragStartPosition;
 
-	int mouse_z = 0;
-
 	bool isDragging = false;
 
 	Plane plane = new Plane(new Vector3(0,0,1), new Vector3(1,0,0), new Vector3(-1,0,0));

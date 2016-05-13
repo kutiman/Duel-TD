@@ -6,29 +6,32 @@ public class Homebase {
 
 	public Tile tile;
 
-	int maxHealth;
-	int health;
+	int maxLives;
+	int lives;
 
-	public int Health {
-		get { return health;}
+	public int Lives {
+		get { return lives;}
 		set { 
 			if (value <= 0) {
-				health = 0;
+				lives = 0;
 				if (cbBaseDestroyed != null) {
 					cbBaseDestroyed();
 				}
+				return;
 			}
-			if (value > maxHealth) {
-				health = maxHealth;
+			if (value > maxLives) {
+				lives = maxLives;
+				return;
 			}
+			lives = value;
 		}
 	}
 
 	Action cbBaseDestroyed;
 
-	public Homebase (Tile t, int health = 100) {
+	public Homebase (Tile t, int lives = 20) {
 		this.tile = t;
-		this.maxHealth = this.health = health;
+		this.maxLives = this.lives = lives;
 	}
 	/// <summary>
 	/// Registers the base destroyed callback.

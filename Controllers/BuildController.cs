@@ -29,9 +29,7 @@ public class BuildController : MonoBehaviour {
 				break;
 
 			case BuildMode.zombie:
-				if (WorldController.Instance.world.IsImmovablePositionValid (t)) {
-					WorldController.Instance.world.CreateZombie(zombieType, t);
-				}
+				WorldController.Instance.world.CreateZombie(zombieType, t);
 				break;
 
 			default:

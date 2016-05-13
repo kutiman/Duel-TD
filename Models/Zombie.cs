@@ -9,16 +9,36 @@ public class Zombie {
 	public Tile currTile {get; protected set;}
 	Tile destTile;
 	Tile nextTile;
-	Path_AStar pathAStar;
+	public Path_AStar pathAStar;
 
-	PlayerController enemy;
+	public PlayerController enemy;
 
 	float movementPercentage;
-	float speed = 2f;
+	float speed;
+	public float xp {get; protected set;}
+	public float payout {get; protected set;}
+
+	int maxHealth;
+	int health;
+
+	public int Health {
+		get { return health;}
+		set { 
+			if (value <= 0) {
+				health = 0;
+				if (cbZombieKilled != null) {
+					cbZombieKilled(this);
+				}
+			}
+			if (value > maxHealth) {
+				health = maxHealth;
+			}
+		}
+	}
 
 	Action<Zombie> cbZombieMoved;
 	Action<Zombie> cbZombieReachedEnd;
-
+	Action<Zombie> cbZombieKilled;
 
 	// graphics location of the character
 	public float X { 
@@ -34,16 +54,41 @@ public class Zombie {
 		} 
 	}
 
+	public Zombie (string zombieType, int maxHealth, int xp, int payout, float speed) {
 
-	public Zombie (Tile tile, string zombieType, PlayerController enemy) {
-		currTile = nextTile = tile;
-		destTile = enemy.homebase.tile;
 		this.zombieType = zombieType;
-		this.enemy = enemy;
+		this.maxHealth = maxHealth;
+		this.xp = xp;
+		this.payout = payout;
+		this.speed = speed;
+	}
+
+	/// Copy constructor
+	protected Zombie (Zombie other) { 
+
+		this.zombieType = other.zombieType;
+		this.maxHealth = this.health = other.maxHealth;
+		this.xp = other.xp;
+		this.payout = other.payout;
+		this.speed = other.speed;
+
+	}
+
+	virtual public Zombie Clone () {
+		return new Zombie(this);
+	}
+
+	static public Zombie PlaceInstance (Zombie proto, Tile tile, PlayerController enemy) {
+
+		Zombie zom = proto.Clone();
+		zom.currTile = zom.nextTile = tile;
+		zom.enemy = enemy;
+		zom.destTile = zom.enemy.homebase.tile;
+
+		return zom;
 	}
 
 	void Update_DoMovement (float deltaTime) {
-
 		if (currTile == destTile) {
 			pathAStar = null;
 			if (cbZombieReachedEnd != null) {
@@ -54,12 +99,13 @@ public class Zombie {
 
 		if (nextTile == null || nextTile == currTile) {
 			// get the next tile from the pathfinder
+
 			if (pathAStar == null || pathAStar.Length () == 0) {
 				// generate a new path to our destination
 				pathAStar = new Path_AStar (WorldController.Instance.world, currTile, destTile);
+				Debug.Log("making a path");
 				if (pathAStar.Length () == 0) {
-					//Debug.LogError ("pathAStar returned no path to destination");
-					// FIXME: the job should be re-enqued
+					Debug.LogError ("pathAStar returned no path to destination");
 					pathAStar = null;
 					return;
 				}
@@ -67,7 +113,6 @@ public class Zombie {
 			}
 			// FIXME: discarding the first node, the current tile of the character
 			// from the pathfinding system. Maybe there's a better way?
-
 
 			nextTile = pathAStar.Dequeue ();
 
@@ -124,6 +169,14 @@ public class Zombie {
 
 	public void UnregisterZombieReachedEndCallback (Action<Zombie> cb) {
 		cbZombieReachedEnd -= cb;
+	}
+
+	public void RegisterZombieKilledCallback (Action<Zombie> cb) {
+		cbZombieKilled += cb;
+	}
+
+	public void UnregisterZombieKilledCallback (Action<Zombie> cb) {
+		cbZombieKilled -= cb;
 	}
 
 }

@@ -19,6 +19,7 @@ public class ZombieController : MonoBehaviour {
 		ZombieGameObjectMap = new Dictionary<Zombie, GameObject>();
 		ZombiesMap = Utilities.PopulateGameObjectsDictionary(ZombiesList);
 		world.RegisterZombieCreated (OnZombieCreated);
+		//world.RegisterZombieCreated (OnZombieCreated);
 
 		foreach(Zombie zom in world.zombies) {
 			OnZombieCreated(zom);
@@ -36,6 +37,8 @@ public class ZombieController : MonoBehaviour {
 		zom_go.transform.SetParent(this.transform, true);
 
 		zom.RegisterZombieMovedCallback(OnZombieMoved);
+		zom.RegisterZombieKilledCallback(OnZombieKilled);
+		zom.RegisterZombieReachedEndCallback(OnZombieReachedEnd);
 	}
 
 	void OnZombieMoved (Zombie zom) {
@@ -48,4 +51,30 @@ public class ZombieController : MonoBehaviour {
 		GameObject zom_go = ZombieGameObjectMap[zom];
 		zom_go.transform.position = new Vector3 (zom.X, 0, zom.Y);
 	}
+
+	void OnZombieReachedEnd (Zombie zom) {
+		
+		if (ZombieGameObjectMap.ContainsKey (zom) == false) {
+			Debug.LogError("Trying to kill a zombie which is not in our map");
+			return;
+		}
+
+		zom.enemy.homebase.Lives--;
+		//GameObject zom_go = ZombieGameObjectMap[zom];
+		Debug.Log("Lives: " + zom.enemy.homebase.Lives);
+		Destroy(ZombieGameObjectMap[zom]);
+		ZombieGameObjectMap.Remove(zom);
+		world.zombies.Remove(zom);
+	}
+
+	void OnZombieKilled (Zombie zom) {
+
+		if (ZombieGameObjectMap.ContainsKey (zom) == false) {
+			Debug.LogError("Trying to kill a zombie which is not in our map");
+			return;
+		}
+
+		ZombieGameObjectMap.Remove(zom);
+	}
+
 }

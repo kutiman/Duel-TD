@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class Inventory {
 
 	Dictionary<string, int> inventoryMap;
-	int maxItems;
+//	int maxItems;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="Inventory"/> class.
@@ -12,7 +12,7 @@ public class Inventory {
 	/// <param name="maxItems">Max items.</param>
 	public Inventory (int maxItems = 20) {
 		inventoryMap = new Dictionary<string, int>();
-		this.maxItems = maxItems;
+//		this.maxItems = maxItems;
 	}
 
 	/// <summary>

@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour {
 		inventory = new Inventory();
 		// FIXME: change from hardcoded to something better
 		homebase = new Homebase(world.GetTileAt(world.Width-1, (world.Height-1)/2));
-		Debug.Log(homebase.tile.X +"_"+ homebase.tile.Y);
+		//Debug.Log(homebase.tile.X +"_"+ homebase.tile.Y);
 		PlaceHomebase (homebase);
 	}
 
